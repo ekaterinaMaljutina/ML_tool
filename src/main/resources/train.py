@@ -40,9 +40,9 @@ if arg.data is None:
 
 dataset_file = arg.data
 
-print("use %s file .... " % arg.file)
+print("use %s file .... " % dataset_file)
 
-with open(arg.file, 'rb') as f:
+with open(dataset_file, 'rb') as f:
     save = pickle.load(f)
     train_dataset = save['train_dataset']
     train_labels = save['train_labels']

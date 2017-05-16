@@ -63,6 +63,7 @@ public final class Script {
 
     @NotNull
     private String getArg(@NotNull final String name, @NotNull final String value) {
-        return String.format("--{} {}", name, value);
+
+        return String.format(" -%s %s", name, value);
     }
 }

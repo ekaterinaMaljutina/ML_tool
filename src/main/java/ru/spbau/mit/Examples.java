@@ -89,7 +89,13 @@ public class Examples extends JFrame {
         textArea.setBounds(200, 100, 100, 100);
         textArea.setSize(400, 600);
         textArea.setLineWrap(true);
-        panelLower.add(textArea);
+
+        textArea.setCaretPosition(textArea.getDocument().getLength());
+
+        JScrollPane scrollPane = new JScrollPane(textArea);
+//        scrollPane.
+        panelLower.add(scrollPane);
+
         add(panelLower);
         pack();
         setVisible(true);

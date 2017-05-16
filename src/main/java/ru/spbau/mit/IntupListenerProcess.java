@@ -20,6 +20,7 @@ public class IntupListenerProcess extends Thread {
             int value = -1;
             while ((value = is.read()) != -1) {
                 out.append(String.valueOf((char) value));
+                out.setCaretPosition(out.getDocument().getLength());
             }
         } catch (IOException exp) {
             exp.printStackTrace();
