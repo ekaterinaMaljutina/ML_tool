@@ -19,14 +19,24 @@ def dense_to_one_hot(labels_dense, num_classes=10):
     return labels_one_hot
 
 
-def full_connent_network(activaction_='tanh', lerning_rate=0.001):
+def conv2_with_relu_and_drop_and_full_connent_network(drop=0.2, lerning_rate=0.001):
     network = input_data(shape=[None, 28, 28, 1], name='input')
-    network = fully_connected(network, n_units=1024 * 4, activation='tanh')
-    network = fully_connected(network, n_units=1024 * 2, activation=activaction_)
-    network = fully_connected(network, n_units=1024 * 1, activation=activaction_)
+
+    network = conv_2d(network, nb_filter=3, filter_size=3, strides=1, activation='relu')
+    network = max_pool_2d(network, kernel_size=3, strides=2)
+
+    network = conv_2d(network, nb_filter=3, filter_size=3, strides=1, activation='relu')
+    network = max_pool_2d(network, kernel_size=3, strides=2)
+
+    network = fully_connected(network, 1024 * 4, activation='relu')
+    network = dropout(network, 1 - drop)
+    network = fully_connected(network, 1024 * 2, activation='relu')
+    network = dropout(network, 1 - drop)
+    network = fully_connected(network, 1024 * 1, activation='relu')
+
     network = fully_connected(network, 10, activation='softmax')
-    network = regression(network, optimizer='sgd', learning_rate=lerning_rate, loss='categorical_crossentropy',
-                         name='target')
+    network = regression(network, optimizer='adam', learning_rate=lerning_rate,
+                         loss='categorical_crossentropy', name='target')
     return network
 
 
@@ -45,7 +55,7 @@ def main():
     argument = args.ArgumentParser(description="Full connected network")
 
     argument.add_argument('-data', '--data', dest="data", help='File with dataset')
-    argument.add_argument('-func_act', '--func_act', dest="func_act", help='Activation function')
+    argument.add_argument('-drop', '--drop', dest="drop", help='Drop in each layers')
     argument.add_argument('-lr', '--lr', dest='lr', help='initial lerning rate')
 
     value = argument.parse_args()
@@ -84,22 +94,22 @@ def main():
         "X_val": X_val,
         "y_val": y_val
     }
-    if value.lr is None and value.func_act is not None:
-        func_activation = value.func_act
-        fit_and_predict(full_connent_network(activaction_=func_activation), data_dict,
-                        "_".join(["full_connect_{}_{}".format(func_activation, 0.001), ""]))
-    elif value.lr is not None and value.func_act is not None:
+    if value.lr is not None and value.drop is not None:
         lr = float(value.lr)
-        func_activation = value.func_act
-        fit_and_predict(full_connent_network(activaction_=func_activation, lerning_rate=lr), data_dict,
-                        "_".join(["full_connect_{}_{}".format(func_activation, lr), ""]))
-    elif value.lr is not None and value.func_act is None:
+        drop = float(value.drop)
+        fit_and_predict(conv2_with_relu_and_drop_and_full_connent_network(drop=drop, lerning_rate=lr), data_dict,
+                        "_".join(["conv2_with_relu_and_drop_and_full_connent_network_{}_{}".format(drop, lr), ""]))
+    elif value.lr is not None and value.drop is None:
         lr = float(value.lr)
-        fit_and_predict(full_connent_network(lerning_rate=lr), data_dict,
-                        "_".join(["full_connect_tang_{}".format(lr), ""]))
+        fit_and_predict(conv2_with_relu_and_drop_and_full_connent_network(lerning_rate=lr), data_dict,
+                        "_".join(["conv2_with_relu_and_drop_and_full_connent_network_{}_{}".format(0.2, lr), ""]))
+    elif value.lr is None and value.drop is not None:
+        drop = float(value.drop)
+        fit_and_predict(conv2_with_relu_and_drop_and_full_connent_network(drop=drop), data_dict,
+                        "_".join(["conv2_with_relu_and_drop_and_full_connent_network_{}_{}".format(drop, 0.001), ""]))
     else:
-        fit_and_predict(full_connent_network(), data_dict,
-                        "_".join(["full_connect_tang_{}".format(0.001), ""]))
+        fit_and_predict(conv2_with_relu_and_drop_and_full_connent_network(), data_dict,
+                        "_".join(["conv2_with_relu_and_drop_and_full_connent_network_{}_{}".format(0.2, 0.001), ""]))
 
 
 if __name__ == '__main__':

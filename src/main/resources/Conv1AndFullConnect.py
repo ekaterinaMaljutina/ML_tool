@@ -19,13 +19,14 @@ def dense_to_one_hot(labels_dense, num_classes=10):
     return labels_one_hot
 
 
-def full_connent_network(activaction_='tanh', lerning_rate=0.001):
+def conv1_and_full_connent_network(activaction_='tanh', lerning_rate=0.001, ):
     network = input_data(shape=[None, 28, 28, 1], name='input')
-    network = fully_connected(network, n_units=1024 * 4, activation='tanh')
-    network = fully_connected(network, n_units=1024 * 2, activation=activaction_)
-    network = fully_connected(network, n_units=1024 * 1, activation=activaction_)
+    network = conv_2d(network, nb_filter=3, filter_size=3, strides=1, activation='relu')
+    network = fully_connected(network, 1024 * 4, activation=activaction_)
+    network = fully_connected(network, 1024 * 2, activation=activaction_)
+    network = fully_connected(network, 1024 * 1, activation=activaction_)
     network = fully_connected(network, 10, activation='softmax')
-    network = regression(network, optimizer='sgd', learning_rate=lerning_rate, loss='categorical_crossentropy',
+    network = regression(network, optimizer='adam', learning_rate=lerning_rate, loss='categorical_crossentropy',
                          name='target')
     return network
 
@@ -86,20 +87,20 @@ def main():
     }
     if value.lr is None and value.func_act is not None:
         func_activation = value.func_act
-        fit_and_predict(full_connent_network(activaction_=func_activation), data_dict,
-                        "_".join(["full_connect_{}_{}".format(func_activation, 0.001), ""]))
+        fit_and_predict(conv1_and_full_connent_network(activaction_=func_activation), data_dict,
+                        "_".join(["conv1_and_full_connent_network_{}_{}".format(func_activation, 0.001), ""]))
     elif value.lr is not None and value.func_act is not None:
         lr = float(value.lr)
         func_activation = value.func_act
-        fit_and_predict(full_connent_network(activaction_=func_activation, lerning_rate=lr), data_dict,
-                        "_".join(["full_connect_{}_{}".format(func_activation, lr), ""]))
+        fit_and_predict(conv1_and_full_connent_network(activaction_=func_activation, lerning_rate=lr), data_dict,
+                        "_".join(["conv1_and_full_connent_network_{}_{}".format(func_activation, lr), ""]))
     elif value.lr is not None and value.func_act is None:
         lr = float(value.lr)
-        fit_and_predict(full_connent_network(lerning_rate=lr), data_dict,
-                        "_".join(["full_connect_tang_{}".format(lr), ""]))
+        fit_and_predict(conv1_and_full_connent_network(lerning_rate=lr), data_dict,
+                        "_".join(["conv1_and_full_connent_network_tanh{}".format(lr), ""]))
     else:
-        fit_and_predict(full_connent_network(), data_dict,
-                        "_".join(["full_connect_tang_{}".format(0.001), ""]))
+        fit_and_predict(conv1_and_full_connent_network(), data_dict,
+                        "_".join(["conv1_and_full_connent_network_tanh{}".format(0.001), ""]))
 
 
 if __name__ == '__main__':
