@@ -1,10 +1,17 @@
+from __future__ import print_function
 import pickle
 import numpy as np
 import tensorflow as tf
 import argparse
 import functools
 
-print = functools.partial(print, flush=True)
+import sys
+
+
+def print(s, end='\n', file=sys.stdout):
+    file.write(s + end)
+    file.flush()
+
 
 def reformat(dataset, labels):
     dataset = dataset.reshape(
@@ -28,7 +35,7 @@ parser.add_argument('file', metavar='name', help='file with dataset')
 arg = parser.parse_args()
 dataset_file = arg.file
 
-print( "use %s file .... " % arg.file)
+print("use %s file .... " % arg.file)
 
 with open(arg.file, 'rb') as f:
     save = pickle.load(f)
@@ -39,16 +46,16 @@ with open(arg.file, 'rb') as f:
     test_dataset = save['test_dataset']
     test_labels = save['test_labels']
     del save  # hint to help gc free up memory
-    print('Training set', train_dataset.shape, train_labels.shape)
-    print('Validation set', valid_dataset.shape, valid_labels.shape)
-    print('Test set', test_dataset.shape, test_labels.shape)
+    print('Training set {} {}'.format(train_dataset.shape, train_labels.shape))
+    print('Validation set {} {}'.format(valid_dataset.shape, valid_labels.shape))
+    print('Test set {} {}'.format(test_dataset.shape, test_labels.shape))
 
 train_dataset, train_labels = reformat(train_dataset, train_labels)
 valid_dataset, valid_labels = reformat(valid_dataset, valid_labels)
 test_dataset, test_labels = reformat(test_dataset, test_labels)
-print('Training set', train_dataset.shape, train_labels.shape)
-print('Validation set', valid_dataset.shape, valid_labels.shape)
-print('Test set', test_dataset.shape, test_labels.shape)
+print('Training set {} {}'.format(train_dataset.shape, train_labels.shape))
+print('Validation set {} {}'.format(valid_dataset.shape, valid_labels.shape))
+print('Test set {} {}'.format(test_dataset.shape, test_labels.shape))
 
 batch_size = 16
 patch_size = 5
@@ -118,8 +125,8 @@ with tf.Session(graph=graph) as session:
         _, l, predictions = session.run(
             [optimizer, loss, train_prediction], feed_dict=feed_dict)
         if (step % 50 == 0):
-            print('Minibatch loss at step %d: %f' % (step, l))
-            print('Minibatch accuracy: %.1f%%' % accuracy(predictions, batch_labels))
-            print('Validation accuracy: %.1f%%' % accuracy(
-                valid_prediction.eval(), valid_labels))
-    print('Test accuracy: %.1f%%' % accuracy(test_prediction.eval(), test_labels))
+            print('Minibatch loss at step {}: {}'.format(step, l))
+            print('Minibatch accuracy: {}'.format(accuracy(predictions, batch_labels)))
+            print('Validation accuracy: {}'.format(accuracy(
+                valid_prediction.eval(), valid_labels)))
+    print('Test accuracy: {}'.format(accuracy(test_prediction.eval(), test_labels)))

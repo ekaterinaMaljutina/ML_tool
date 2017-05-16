@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public final class scriptActiomListener implements ActionListener {
-    private static final String PYTHON3 = "python3";
+    private static final String PYTHON2 = "python2";
 
     private RunnerScript runnerScript;
 
@@ -49,7 +49,7 @@ public final class scriptActiomListener implements ActionListener {
 
             Runtime r = Runtime.getRuntime();
             ProcessBuilder processBuilder = new ProcessBuilder()
-                    .command(PYTHON3, script, pathToData + nameData);
+                    .command(PYTHON2, script, pathToData + nameData);
             Process proc;
             processBuilder.command().stream().forEach(s -> System.out.print(s));
             System.out.println("");

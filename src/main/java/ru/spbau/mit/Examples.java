@@ -13,7 +13,7 @@ import java.util.List;
 public class Examples extends JFrame {
     private static final String PATH_TO_RESOURCES = "src/main/resources/";
     private static final String RUN_SCRIPT = "%s  %s  %s ";
-    private static final String PYTHON3 = "python3";
+    private static final String PYTHON2 = "python2";
     private static final Map<String, String> SCRIPTS = new HashMap<String, String>() {{
         put("test", PATH_TO_RESOURCES);
         put("train", PATH_TO_RESOURCES);

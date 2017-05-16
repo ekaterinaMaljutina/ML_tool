@@ -1,3 +1,4 @@
+from __future__ import print_function
 import argparse as args
 import numpy as np
 
@@ -9,6 +10,13 @@ from tflearn.layers.estimator import regression
 
 tflearn.activations
 from sklearn.model_selection import train_test_split
+
+import sys
+
+
+def print_(s, end='\n', file=sys.stdout):
+    file.write(s + end)
+    file.flush()
 
 
 def dense_to_one_hot(labels_dense, num_classes=10):
@@ -57,7 +65,7 @@ def main():
     file_with_data = value.data
 
     data = np.load(file=file_with_data, allow_pickle=True)
-    print "data {} is load".format(file_with_data)
+    print_("data {} is load".format(file_with_data))
     X, Y = data['test_dataset'], data['test_labels']
     X_val, y_val = data['valid_dataset'][:1000], data['valid_labels'][:1000]
     del data

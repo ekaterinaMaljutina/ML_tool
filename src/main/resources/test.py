@@ -1,8 +1,14 @@
+from __future__ import print_function
 import time
-import argparse
+import sys
 
-import functools
-print = functools.partial(print, flush=True)
-for i in range(2):
-	print("%s hello" % i)
-	time.sleep(5)
+
+def print_(s, end='\n', file=sys.stdout):
+    file.write(s + end)
+    file.flush()
+
+
+sys.stdout.flush()
+for i in range(5):
+    print_("%s hello" % i)
+    time.sleep(5)
