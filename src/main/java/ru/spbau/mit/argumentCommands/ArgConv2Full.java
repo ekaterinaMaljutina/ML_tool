@@ -3,9 +3,8 @@ package ru.spbau.mit.argumentCommands;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.*;
 
-public class ArgTrainScritp extends ScriptArgsAbstractClass {
+public class ArgConv2Full extends ScriptArgsAbstractClass {
 
     @Override
     public @NotNull String getValueArg(@NotNull String key) {
@@ -18,5 +17,4 @@ public class ArgTrainScritp extends ScriptArgsAbstractClass {
         panel.add(argPanel);
         return panel;
     }
-
 }

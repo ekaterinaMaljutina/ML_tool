@@ -4,28 +4,26 @@ package ru.spbau.mit.argumentCommands;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.border.Border;
 import java.awt.*;
 
-public class ArgFullConcNet extends ScriptArgsAbstractClass {
-
-
-    private static final String FORMAT = "0.000000";
-
-    private static JComboBox func_act = new JComboBox() {{
+public class ArgConv1Full extends ScriptArgsAbstractClass {
+    private JComboBox func_act = new JComboBox() {{
         addItem("tanh");
         addItem("relu");
         addItem("sigmoid");
     }};
+
 
     @Override
     public @NotNull String getValueArg(@NotNull String key) {
         return null;
     }
 
+
     @Override
     public @NotNull JPanel drawComponents(@NotNull JPanel panel) {
         init();
+
         constraints.gridx = 0;
         constraints.gridy = 1;
         constraints.weightx = 0.0;

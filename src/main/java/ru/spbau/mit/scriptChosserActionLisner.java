@@ -1,16 +1,13 @@
 package ru.spbau.mit;
 
 import org.jetbrains.annotations.NotNull;
-import ru.spbau.mit.argumentCommands.ArgTrainScritp;
 import ru.spbau.mit.argumentCommands.FactoryArgScript;
-import ru.spbau.mit.argumentCommands.ScriptArgs;
+import ru.spbau.mit.argumentCommands.ScriptArgsAbstractClass;
 
 import javax.swing.*;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.security.UnrecoverableKeyException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,15 +47,14 @@ public class scriptChosserActionLisner implements ActionListener {
         }
         String currentScript = getSelectItem.get(0)[1].replace("]", "");
 
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         drawParamForScript(currentScript);
-
-
         panel.repaint();
         panel.revalidate();
     }
 
     private void drawParamForScript(@NotNull final String scriptName) {
-        ScriptArgs currentScript = FactoryArgScript.getArgsScriptByName(scriptName);
+        ScriptArgsAbstractClass currentScript = FactoryArgScript.getArgsScriptByName(scriptName);
         if (currentScript != null) {
             currentScript.drawComponents(panel);
         }
