@@ -14,9 +14,14 @@ public class Examples extends JFrame {
     private static final String PATH_TO_RESOURCES = "src/main/resources/";
     private static final String RUN_SCRIPT = "%s  %s  %s ";
     private static final String PYTHON2 = "python2";
-    private static final Map<String, String> SCRIPTS = new HashMap<String, String>() {{
-        put("test", PATH_TO_RESOURCES);
-        put("train", PATH_TO_RESOURCES);
+    private static final Map<String, Script> SCRIPTS = new HashMap<String, Script>() {{
+        put("test", new Script("test", PATH_TO_RESOURCES));
+        put("train", new Script("train",PATH_TO_RESOURCES, "data"));
+        put("FullConNet", new Script("FullConNet", PATH_TO_RESOURCES, "data", "func_act", "lr"));
+        put("Conv1AndFullConnect", new Script("Conv1AndFullConnect",PATH_TO_RESOURCES,
+                "data", "fucn_act", "lr"));
+        put("Conv2AndFullConc", new Script("Conv2AndFullConc",PATH_TO_RESOURCES, "data","lr"));
+        put("Conv2DropAndFull", new Script("Conv2DropAndFull", PATH_TO_RESOURCES, "data", "drop", "lr"));
     }};
 
     private JToolBar toolbar;
@@ -30,7 +35,6 @@ public class Examples extends JFrame {
     private JButton runScript;
 
     private List<String> scriptNames = new ArrayList<>();
-    private Map<String, Script> nameToScropt = new HashMap<>();
     private List<String> datasetNames = new ArrayList<>(Arrays.asList("notMNIST.pickle"));
     private Map<String, String> nameToPath = new HashMap<String, String>() {{
         put(datasetNames.get(0), PATH_TO_RESOURCES);
@@ -90,7 +94,7 @@ public class Examples extends JFrame {
         pack();
         setVisible(true);
 
-        runScript.addActionListener(new scriptActiomListener(nameToScropt, datasetNames, nameToPath,
+        runScript.addActionListener(new scriptActiomListener(SCRIPTS, datasetNames, nameToPath,
                 datasetChooser, textArea, scriptNames, scriptChooser));
 
     }
@@ -121,7 +125,7 @@ public class Examples extends JFrame {
 
         scriptChooser = new JComboBox(scriptNames.toArray());
 
-        SCRIPTS.forEach((name, path) -> addToMethodList(name, path));
+        SCRIPTS.forEach((name, script) -> addToMethodList(name));
 
         toolbar.putClientProperty("chooserScript", scriptChooser);
         addToToolbar(scriptChooser, 0, 4);
@@ -138,14 +142,8 @@ public class Examples extends JFrame {
         datasetChooser.addItem(name);
     }
 
-    private void addToMethodListFromResources(String name) {
-        addToMethodList(name, PATH_TO_RESOURCES);
-    }
-
-    private void addToMethodList(String name, String path) {
+    private void addToMethodList(String name) {
         scriptNames.add(name);
-        nameToScropt.put(name, new Script(name, path));
-
         scriptChooser.addItem(name);
     }
 }

@@ -42,14 +42,17 @@ public final class scriptActiomListener implements ActionListener {
     private class RunnerScript extends Thread {
         @Override
         public void run() {
-            String script = nameToScropt.get(scriptNames.get(scriptChooser.getSelectedIndex())).fullPath();
+            Script currentScript = nameToScropt.get(scriptNames.get(scriptChooser.getSelectedIndex()));
+            String scriptPath = currentScript.fullPath();
             String nameData = datasetNames.get(datasetChooser.getSelectedIndex());
             String pathToData = nameToPath.get(nameData);
+            currentScript.getArgValue("data", pathToData+nameData);
 
 
             Runtime r = Runtime.getRuntime();
             ProcessBuilder processBuilder = new ProcessBuilder()
-                    .command(PYTHON2, script, pathToData + nameData);
+                    .command(PYTHON2, scriptPath, currentScript.returnArgScript());
+
             Process proc;
             processBuilder.command().stream().forEach(s -> System.out.print(s));
             System.out.println("");

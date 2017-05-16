@@ -30,10 +30,15 @@ num_labels = 10
 num_channels = 1  # grayscale
 
 parser = argparse.ArgumentParser()
-parser.add_argument('file', metavar='name', help='file with dataset')
+parser.add_argument('-data', '--data', dest="data", help='File with dataset')
 
 arg = parser.parse_args()
-dataset_file = arg.file
+
+if arg.data is None:
+    parser.print_help()
+    exit()
+
+dataset_file = arg.data
 
 print("use %s file .... " % arg.file)
 
