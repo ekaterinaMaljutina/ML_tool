@@ -21,13 +21,6 @@ public class LassoRegression extends ScriptArgsRegressionAbstractClass {
         iterSpinner.setName("iter");
     }
 
-//    @Override
-//    public @NotNull String getValueArg(@NotNull String key) {
-//        List<Component> components = Arrays.asList(argPanel.getComponents());
-//
-//        return null;
-//    }
-
     @Override
     public @NotNull JPanel drawComponents(@NotNull JPanel panel) {
         init();

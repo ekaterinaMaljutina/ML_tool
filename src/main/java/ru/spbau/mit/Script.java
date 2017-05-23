@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public final class Script {
     private static final String VALUE_ARG = "";
@@ -50,19 +49,13 @@ public final class Script {
     }
 
     @Nullable
-    public final List<String> returnArgScript() {
-        String res = "";
-        List<String> values = arguments.values().stream().collect(Collectors.toList());
-        List<String> keys = arguments.keySet().stream().collect(Collectors.toList());
-        List<String> args = new ArrayList<>();
-
-        for (int i = 0; i < keys.size(); i++) {
-            if (values.get(i) != "") {
-                args.add("--" + keys.get(i));
-                args.add(values.get(i));
+    public final List<String> returnArgScript(List<String> args) {
+        for (Map.Entry entry : arguments.entrySet()) {
+            if (entry.getValue() != "") {
+                args.add("--" + entry.getKey());
+                args.add(entry.getValue().toString());
             }
         }
-
         return args;
     }
 

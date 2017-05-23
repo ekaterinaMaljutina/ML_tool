@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -31,19 +32,17 @@ public final class scriptActiomListener implements ActionListener {
 
             currentScript.setArgValue("data", GUI.datasetName());
             currentScript.setOtherArgs();
-//            scriptChosserActionLisner.getPanelValue("degree");
 
             Runtime r = Runtime.getRuntime();
             System.out.println(scriptPath);
 
-            List<String> args = currentScript.returnArgScript();
+            List<String> args = new ArrayList<>();
             args.add(0, PYTHON2);
             args.add(1, scriptPath);
+            args = currentScript.returnArgScript(args);
+
             ProcessBuilder processBuilder = new ProcessBuilder()
                     .command(args.toArray(new String[0]));
-            //PYTHON2, scriptPath, currentScript.returnArgScript().toArray(new String[0]) );
-            //"--data", pathToData + nameData); //currentScript.returnArgScript());
-
             Process proc;
             processBuilder.command().stream().forEach(s -> System.out.print(s));
             System.out.println("");

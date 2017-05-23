@@ -17,11 +17,6 @@ public class ArgFullConcNet extends ScriptArgsClassificationAbstractClass {
         addItem("sigmoid");
     }};
 
-//    @Override
-//    public @NotNull String getValueArg(@NotNull String key) {
-//        return null;
-//    }
-
     @Override
     public @NotNull JPanel drawComponents(@NotNull JPanel panel) {
         init();

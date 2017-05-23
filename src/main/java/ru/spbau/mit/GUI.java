@@ -19,22 +19,10 @@ import java.util.stream.Stream;
 public class GUI extends JFrame {
     private static final String PATH_TO_RESOURCES = "src/main/resources/";
 
-    private static final String RUN_SCRIPT = "%s  %s  %s ";
     private static final String PYTHON2 = "python2";
 
-    private static Map<String, Script> scriptsClassification = new HashMap<String, Script>() {{
-
-//        put("test", new Script("test", PATH_TO_RESOURCES));
-//        put("train", new Script("train", PATH_TO_RESOURCES, "data"));
-//        put("FullConNet", new Script("FullConNet", PATH_TO_RESOURCES, "data", "func_act", "lr"));
-//        put("Conv1AndFullConnect", new Script("Conv1AndFullConnect", PATH_TO_RESOURCES,
-//                "data", "fucn_act", "lr"));
-//        put("Conv2AndFullConc", new Script("Conv2AndFullConc", PATH_TO_RESOURCES, "data", "lr"));
-//        put("Conv2DropAndFull", new Script("Conv2DropAndFull", PATH_TO_RESOURCES, "data", "drop", "lr"));
-    }};
-    private static Map<String, Script> scriptRegression = new HashMap<String, Script>() {{
-
-    }};
+    private static Map<String, Script> scriptsClassification = new HashMap<>();
+    private static Map<String, Script> scriptRegression = new HashMap<>();
 
     private JToolBar toolbar;
     private JButton datasetButton;
@@ -50,14 +38,12 @@ public class GUI extends JFrame {
     private static JComboBox taskChooser = new JComboBox() {{
         addItem("regression");
         addItem("classification");
-        setSelectedIndex(1);
     }};
 
     private List<String> scriptNames = new ArrayList<>();
     private static List<String> datasetNames = new ArrayList<>(Arrays.asList("notMNIST.pickle", "noisysine.csv"));
     private static Map<String, String> nameToPath = new HashMap<String, String>() {{
         datasetNames.stream().forEach(s -> put(s, PATH_TO_RESOURCES));
-//        put(datasetNames.get(0), PATH_TO_RESOURCES);
     }};
 
     private scriptChosserActionLisner chosserActionLisner;
