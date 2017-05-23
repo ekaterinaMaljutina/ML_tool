@@ -88,10 +88,13 @@ public class GUI extends JFrame {
                         } else {
                             scriptRegression.forEach((name, script) -> addToMethodList(name));
                         }
-                        System.out.println("regrer");
                         break;
                     case "classification":
-                        scriptsClassification.forEach((name, script) -> addToMethodList(name));
+                        if (scriptsClassification.isEmpty()) {
+                            initScripts("classification");
+                        } else {
+                            scriptsClassification.forEach((name, script) -> addToMethodList(name));
+                        }
                         break;
                 }
             }
