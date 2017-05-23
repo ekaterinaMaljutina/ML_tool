@@ -10,11 +10,13 @@ import java.util.*;
 import java.util.List;
 
 
-public class Examples extends JFrame {
+public class GUI extends JFrame {
     private static final String PATH_TO_RESOURCES = "src/main/resources/";
+
     private static final String RUN_SCRIPT = "%s  %s  %s ";
     private static final String PYTHON2 = "python2";
-    private static final Map<String, Script> SCRIPTS = new HashMap<String, Script>() {{
+
+    private static final Map<String, Script> SCRIPTS_CLASSIFICATION = new HashMap<String, Script>() {{
         put("test", new Script("test", PATH_TO_RESOURCES));
         put("train", new Script("train", PATH_TO_RESOURCES, "data"));
         put("FullConNet", new Script("FullConNet", PATH_TO_RESOURCES, "data", "func_act", "lr"));
@@ -22,6 +24,9 @@ public class Examples extends JFrame {
                 "data", "fucn_act", "lr"));
         put("Conv2AndFullConc", new Script("Conv2AndFullConc", PATH_TO_RESOURCES, "data", "lr"));
         put("Conv2DropAndFull", new Script("Conv2DropAndFull", PATH_TO_RESOURCES, "data", "drop", "lr"));
+    }};
+    private static final Map<String, Script> SCRIPT_REGRESSION = new HashMap<String, Script>() {{
+
     }};
 
     private JToolBar toolbar;
@@ -33,6 +38,13 @@ public class Examples extends JFrame {
     private JFileChooser fileChooser;
     private JTextArea textArea;
     private JButton runScript;
+
+    private JLabel taskLabel = new JLabel("Task :");
+    private JComboBox taskChooser = new JComboBox() {{
+        addItem("regression");
+        addItem("classification");
+        setSelectedIndex(1);
+    }};
 
     private List<String> scriptNames = new ArrayList<>();
     private List<String> datasetNames = new ArrayList<>(Arrays.asList("notMNIST.pickle"));
@@ -49,7 +61,6 @@ public class Examples extends JFrame {
         datasetButton = new JButton("Dataset: ");
         datasetListener = new DataActionListener();
         datasetButton.addActionListener(
-
                 new ActionListener() {
 
                     @Override
@@ -72,9 +83,23 @@ public class Examples extends JFrame {
                     private JFrame jFrame = new JFrame();
                 }
         );
+        taskChooser.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                scriptChooser.removeAllItems();
+                switch ((String)taskChooser.getSelectedItem()) {
+                    case "regression":
+                        System.out.println("regrer");
+                        break;
+                    case "classification":
+                        SCRIPTS_CLASSIFICATION.forEach((name, script) -> addToMethodList(name));
+                        break;
+                }
+            }
+        });
     }
 
-    public Examples() {
+    public GUI() {
         setLayout(new BorderLayout());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 600);
@@ -93,19 +118,18 @@ public class Examples extends JFrame {
         textArea.setCaretPosition(textArea.getDocument().getLength());
 
         JScrollPane scrollPane = new JScrollPane(textArea);
-//        scrollPane.
         panelLower.add(scrollPane);
 
         add(panelLower);
         pack();
         setVisible(true);
 
-        runScript.addActionListener(new scriptActiomListener(SCRIPTS, datasetNames, nameToPath,
+        runScript.addActionListener(new scriptActiomListener(SCRIPTS_CLASSIFICATION, datasetNames, nameToPath,
                 datasetChooser, textArea, scriptNames, scriptChooser));
 
     }
 
-    public void addToToolbar(Component component, int row, int column) {
+    public void addToToolbar(Component component) {
         Dimension d = component.getPreferredSize();
         component.setMaximumSize(d);
         component.setMinimumSize(d);
@@ -117,26 +141,25 @@ public class Examples extends JFrame {
     public final JToolBar createToolBar() {
         toolbar = new JToolBar();
 
-        addToToolbar(datasetButton, 0, 1);
-
+        addToToolbar(datasetButton);
         datasetChooser =
                 new JComboBox(datasetNames.toArray());
         datasetChooser.setSelectedIndex(0);
         toolbar.putClientProperty("chooserData", datasetChooser);
-        addToToolbar(datasetChooser, 0, 2);
-        methodLabel = new JLabel("Method: ");
+        addToToolbar(datasetChooser);
 
-        addToToolbar(methodLabel, 0, 3);
-
+        addToToolbar(taskLabel);
+        addToToolbar(taskChooser);
 
         scriptChooser = new JComboBox(scriptNames.toArray());
+        SCRIPTS_CLASSIFICATION.forEach((name, script) -> addToMethodList(name));
 
-        SCRIPTS.forEach((name, script) -> addToMethodList(name));
-
+        methodLabel = new JLabel("Method: ");
+        addToToolbar(methodLabel);
         toolbar.putClientProperty("chooserScript", scriptChooser);
-        addToToolbar(scriptChooser, 0, 4);
+        addToToolbar(scriptChooser);
 
-        addToToolbar(runScript, 0, 5);
+        addToToolbar(runScript);
         chosserActionLisner = new scriptChosserActionLisner(this, scriptNames.get(scriptChooser.getSelectedIndex()));
         scriptChooser.addActionListener(chosserActionLisner);
         return toolbar;

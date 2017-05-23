@@ -3,6 +3,6 @@ package ru.spbau.mit;
 public class Main {
 
     public static void main(String args[]) {
-       Examples ex = new Examples();
+       GUI ex = new GUI();
     }
 }

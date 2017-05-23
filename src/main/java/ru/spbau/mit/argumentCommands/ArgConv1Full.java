@@ -24,9 +24,8 @@ public class ArgConv1Full extends ScriptArgsAbstractClass {
     public @NotNull JPanel drawComponents(@NotNull JPanel panel) {
         init();
 
-        constraints.gridx = 0;
-        constraints.gridy = 1;
-        constraints.weightx = 0.0;
+        constraints.gridx = zeroGridX();
+        constraints.gridy = incGridY();
         constraints.gridwidth = 2;
         constraints.fill = GridBagConstraints.HORIZONTAL;
         argPanel.add(func_act, constraints);
