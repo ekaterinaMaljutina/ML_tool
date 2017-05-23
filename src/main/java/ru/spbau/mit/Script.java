@@ -18,7 +18,7 @@ public final class Script {
     private Map<String, String> arguments = new HashMap<>();
 
     public Script(@NotNull final String name, @NotNull final String path,
-                  String... args) {
+                  String[] args) {
         this.name = name;
         this.path = path;
         Path p = Paths.get(path + "/" + name);

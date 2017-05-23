@@ -1,10 +1,10 @@
-package ru.spbau.mit.argumentCommands;
+package ru.spbau.mit.argumentCommands.classification;
 
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class ArgConv2Full extends ScriptArgsAbstractClass {
+public class ArgTrainScritp extends ScriptArgsClassificationAbstractClass {
 
     @Override
     public @NotNull String getValueArg(@NotNull String key) {
@@ -17,4 +17,5 @@ public class ArgConv2Full extends ScriptArgsAbstractClass {
         panel.add(argPanel);
         return panel;
     }
+
 }

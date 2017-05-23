@@ -1,0 +1,49 @@
+package ru.spbau.mit.argumentCommands.regression;
+
+import ru.spbau.mit.argumentCommands.ArgsAbstactClass;
+
+import javax.swing.*;
+import java.awt.*;
+
+public abstract class ScriptArgsRegressionAbstractClass extends ArgsAbstactClass {
+
+    protected JPanel argPanel;
+
+    private JLabel degreeLabel = new JLabel("degree = ", JLabel.CENTER);
+    private JSpinner degree = new JSpinner(new SpinnerNumberModel(2, 1, 10, 1));
+
+    private JLabel splitLabel = new JLabel("split = ", JLabel.CENTER);
+    private JSpinner splitSpinner = new JSpinner(new SpinnerNumberModel(0.1, 0.1, 0.9, 0.05));
+
+    protected GridBagConstraints constraints = new GridBagConstraints();
+
+    {
+        constraints.anchor = GridBagConstraints.FIRST_LINE_START;
+        argPanel = new JPanel();
+        argPanel.setLayout(new GridBagLayout());
+        constraints.fill = GridBagConstraints.NONE;
+        constraints.weightx = 0.5;
+    }
+
+
+    protected void init() {
+        //degree
+        constraints.gridx = zeroGridX();
+        constraints.gridy = zeroGridY();
+        constraints.fill = GridBagConstraints.PAGE_START;
+        argPanel.add(degreeLabel, constraints);
+        constraints.gridx = incGridX();
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        argPanel.add(degree, constraints);
+
+        // split
+        constraints.gridx = zeroGridX();
+        constraints.gridy = incGridY();
+        constraints.fill = GridBagConstraints.LINE_START;
+        argPanel.add(splitLabel, constraints);
+        constraints.gridx = incGridX();
+        constraints.fill = GridBagConstraints.HORIZONTAL;
+        argPanel.add(splitSpinner, constraints);
+
+    }
+}

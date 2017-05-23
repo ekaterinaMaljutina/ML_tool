@@ -3,11 +3,15 @@ package ru.spbau.mit.argumentCommands;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.spbau.mit.argumentCommands.classification.*;
+import ru.spbau.mit.argumentCommands.regression.LassoRegression;
+import ru.spbau.mit.argumentCommands.regression.LinRegression;
+import ru.spbau.mit.argumentCommands.regression.RidgeRegression;
 
 public final class FactoryArgScript {
 
     @Nullable
-    public static ScriptArgsAbstractClass getArgsScriptByName(@NotNull final String nameScript) {
+    public static ArgsAbstactClass getArgsClassificationScriptByName(@NotNull final String nameScript) {
         switch (nameScript) {
             case "test":
                 return null;
@@ -21,6 +25,20 @@ public final class FactoryArgScript {
                 return new ArgConv2Full();
             case "Conv2DropAndFull":
                 return new Conv2Drop();
+            default:
+                return null;
+        }
+    }
+
+    @Nullable
+    public static ArgsAbstactClass getArgsRegressionScriptByName(@NotNull final String nameScript) {
+        switch (nameScript) {
+            case "LinearRegression":
+                return new LinRegression();
+            case "RidgeRegression":
+                return new RidgeRegression();
+            case "Lasso":
+                return new LassoRegression();
             default:
                 return null;
         }

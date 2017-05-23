@@ -1,11 +1,10 @@
-package ru.spbau.mit.argumentCommands;
+package ru.spbau.mit.argumentCommands.regression;
 
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import java.awt.*;
 
-public class ArgTrainScritp extends ScriptArgsAbstractClass {
+public class LinRegression extends ScriptArgsRegressionAbstractClass {
 
     @Override
     public @NotNull String getValueArg(@NotNull String key) {
@@ -18,5 +17,4 @@ public class ArgTrainScritp extends ScriptArgsAbstractClass {
         panel.add(argPanel);
         return panel;
     }
-
 }

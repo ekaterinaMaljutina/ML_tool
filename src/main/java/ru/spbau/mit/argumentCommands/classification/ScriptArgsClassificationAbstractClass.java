@@ -1,18 +1,20 @@
-package ru.spbau.mit.argumentCommands;
+package ru.spbau.mit.argumentCommands.classification;
 
 
 import org.jetbrains.annotations.NotNull;
+import ru.spbau.mit.argumentCommands.ArgsAbstactClass;
 
 import javax.swing.*;
 import java.awt.*;
 
-abstract public class ScriptArgsAbstractClass {
+abstract public class ScriptArgsClassificationAbstractClass extends ArgsAbstactClass {
 
     private static final String FORMAT = "0.000000";
-    private JSpinner lerningRate = new JSpinner(new SpinnerNumberModel(0.001, 0.00001,
-            1.0, 0.00001));
+
     protected JPanel argPanel;
+
     private JLabel label = new JLabel("lr = ", JLabel.CENTER);
+    private JSpinner lerningRate = new JSpinner(new SpinnerNumberModel(0.001, 0.00001, 1.0, 0.00001));
 
     private JLabel epochLabel = new JLabel("epoch = ", JLabel.CENTER);
     private JSpinner epochSpinner = new JSpinner(new SpinnerNumberModel(100, 1, 1000000, 10));
@@ -23,8 +25,6 @@ abstract public class ScriptArgsAbstractClass {
     private JLabel snapshotLabel = new JLabel("snapshot = ", JLabel.CENTER);
     private JSpinner snapshotSpinner = new JSpinner(new SpinnerNumberModel(20, 1, 100000, 5));
 
-    private int gridX = 0;
-    private int gridY = 0;
 
     protected GridBagConstraints constraints = new GridBagConstraints();
 
@@ -37,28 +37,11 @@ abstract public class ScriptArgsAbstractClass {
         constraints.weightx = 0.5;
     }
 
-    protected int zeroGridX() {
-        gridX = 0;
-        return gridX;
-    }
 
-    protected int zeroGridY() {
-        gridY = 0;
-        return gridY;
-    }
-
-    protected int incGridX() {
-        return ++gridX;
-    }
-
-    protected int incGridY() {
-        return ++gridY;
-    }
-
-    public void init() {
+    protected void init() {
         //epoch
-        constraints.gridx = gridX;
-        constraints.gridy = gridY;
+        constraints.gridx = zeroGridX();
+        constraints.gridy = zeroGridY();
         constraints.fill = GridBagConstraints.PAGE_START;
         argPanel.add(epochLabel, constraints);
         constraints.gridx = incGridX();
@@ -77,8 +60,10 @@ abstract public class ScriptArgsAbstractClass {
         //snapshot
         constraints.gridx = zeroGridX();
         constraints.gridy = incGridY();
+        constraints.fill = GridBagConstraints.LINE_START;
         argPanel.add(snapshotLabel, constraints);
         constraints.gridx = incGridX();
+        constraints.fill = GridBagConstraints.HORIZONTAL;
         argPanel.add(snapshotSpinner, constraints);
 
         // lerning rate
@@ -91,9 +76,4 @@ abstract public class ScriptArgsAbstractClass {
         argPanel.add(lerningRate, constraints);
     }
 
-    @NotNull
-    abstract public String getValueArg(@NotNull final String key);
-
-    @NotNull
-    abstract public JPanel drawComponents(@NotNull JPanel panel);
 }

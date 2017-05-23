@@ -1,8 +1,8 @@
 package ru.spbau.mit;
 
 import org.jetbrains.annotations.NotNull;
+import ru.spbau.mit.argumentCommands.ArgsAbstactClass;
 import ru.spbau.mit.argumentCommands.FactoryArgScript;
-import ru.spbau.mit.argumentCommands.ScriptArgsAbstractClass;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,7 +27,7 @@ public class scriptChosserActionLisner implements ActionListener {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         currenrFrame.add(panel, BorderLayout.WEST);
         currenrFrame.repaint();
-        drawParamForScript(initNameScript);
+        factoryTaskChooserArgs(GUI.currentTask(), initNameScript);
 
     }
 
@@ -48,35 +48,24 @@ public class scriptChosserActionLisner implements ActionListener {
         String currentScript = getSelectItem.get(0)[1].replace("]", "");
 
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        drawParamForScript(currentScript);
+
+        factoryTaskChooserArgs(GUI.currentTask(), currentScript);
         panel.repaint();
         panel.revalidate();
     }
 
-    private void drawParamForScript(@NotNull final String scriptName) {
-        ScriptArgsAbstractClass currentScript = FactoryArgScript.getArgsScriptByName(scriptName);
+    private void factoryTaskChooserArgs(@NotNull final String task, @NotNull final String scriptName) {
+        ArgsAbstactClass currentScript = null;
+        switch (task) {
+            case "classification":
+                currentScript = FactoryArgScript.getArgsClassificationScriptByName(scriptName);
+                break;
+            case "regression":
+                currentScript = FactoryArgScript.getArgsRegressionScriptByName(scriptName);
+                break;
+        }
         if (currentScript != null) {
             currentScript.drawComponents(panel);
         }
-//        switch (scriptName) {
-//            case "test":
-//                panel = ArgTrainScritp.drawComponents(panel);
-//                System.out.println("is test");
-//                break;
-//            case "train":
-////                button2 = new JButton("Button 1 Train");
-////                this.panel.add(button2);
-////                panel.add(new JSeparator(JSeparator.HORIZONTAL),
-////                        BorderLayout.AFTER_LAST_LINE);
-////                this.panel.add(new JSeparator(SwingConstants.VERTICAL));
-////                button = new JButton("Button 2 Train");
-////                panel.add(button);
-////                panel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
-//
-//                System.out.println("is train");
-//                break;
-//            default:
-//                throw new UnrecoverableKeyException("not found script with current name");
-//        }
     }
 }

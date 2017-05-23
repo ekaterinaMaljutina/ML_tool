@@ -1,0 +1,6 @@
+test                    : test
+train                   : train, data
+FullConNet              : FullConNet, data, func_act, lr
+Conv1AndFullConnect     : Conv1AndFullConnect, data, fucn_act, lr
+Conv2AndFullConc        : Conv2AndFullConc, data, lr
+Conv2DropAndFull        : Conv2DropAndFull, data, drop, lr

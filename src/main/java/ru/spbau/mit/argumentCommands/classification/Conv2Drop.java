@@ -1,4 +1,4 @@
-package ru.spbau.mit.argumentCommands;
+package ru.spbau.mit.argumentCommands.classification;
 
 
 import org.jetbrains.annotations.NotNull;
@@ -6,7 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import java.awt.*;
 
-public class Conv2Drop extends ScriptArgsAbstractClass{
+public class Conv2Drop extends ScriptArgsClassificationAbstractClass {
 
     private static final String FORMAT_DROP = "0.0";
 

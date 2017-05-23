@@ -1,13 +1,18 @@
 package ru.spbau.mit;
 
+import com.sun.istack.internal.NotNull;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Stream;
 
 
 public class GUI extends JFrame {
@@ -16,16 +21,17 @@ public class GUI extends JFrame {
     private static final String RUN_SCRIPT = "%s  %s  %s ";
     private static final String PYTHON2 = "python2";
 
-    private static final Map<String, Script> SCRIPTS_CLASSIFICATION = new HashMap<String, Script>() {{
-        put("test", new Script("test", PATH_TO_RESOURCES));
-        put("train", new Script("train", PATH_TO_RESOURCES, "data"));
-        put("FullConNet", new Script("FullConNet", PATH_TO_RESOURCES, "data", "func_act", "lr"));
-        put("Conv1AndFullConnect", new Script("Conv1AndFullConnect", PATH_TO_RESOURCES,
-                "data", "fucn_act", "lr"));
-        put("Conv2AndFullConc", new Script("Conv2AndFullConc", PATH_TO_RESOURCES, "data", "lr"));
-        put("Conv2DropAndFull", new Script("Conv2DropAndFull", PATH_TO_RESOURCES, "data", "drop", "lr"));
+    private static Map<String, Script> scriptsClassification = new HashMap<String, Script>() {{
+
+//        put("test", new Script("test", PATH_TO_RESOURCES));
+//        put("train", new Script("train", PATH_TO_RESOURCES, "data"));
+//        put("FullConNet", new Script("FullConNet", PATH_TO_RESOURCES, "data", "func_act", "lr"));
+//        put("Conv1AndFullConnect", new Script("Conv1AndFullConnect", PATH_TO_RESOURCES,
+//                "data", "fucn_act", "lr"));
+//        put("Conv2AndFullConc", new Script("Conv2AndFullConc", PATH_TO_RESOURCES, "data", "lr"));
+//        put("Conv2DropAndFull", new Script("Conv2DropAndFull", PATH_TO_RESOURCES, "data", "drop", "lr"));
     }};
-    private static final Map<String, Script> SCRIPT_REGRESSION = new HashMap<String, Script>() {{
+    private static Map<String, Script> scriptRegression = new HashMap<String, Script>() {{
 
     }};
 
@@ -40,7 +46,7 @@ public class GUI extends JFrame {
     private JButton runScript;
 
     private JLabel taskLabel = new JLabel("Task :");
-    private JComboBox taskChooser = new JComboBox() {{
+    private static JComboBox taskChooser = new JComboBox() {{
         addItem("regression");
         addItem("classification");
         setSelectedIndex(1);
@@ -87,12 +93,17 @@ public class GUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 scriptChooser.removeAllItems();
-                switch ((String)taskChooser.getSelectedItem()) {
+                switch ((String) taskChooser.getSelectedItem()) {
                     case "regression":
+                        if (scriptRegression.isEmpty()) {
+                            initScripts("regression");
+                        } else {
+                            scriptRegression.forEach((name, script) -> addToMethodList(name));
+                        }
                         System.out.println("regrer");
                         break;
                     case "classification":
-                        SCRIPTS_CLASSIFICATION.forEach((name, script) -> addToMethodList(name));
+                        scriptsClassification.forEach((name, script) -> addToMethodList(name));
                         break;
                 }
             }
@@ -100,6 +111,7 @@ public class GUI extends JFrame {
     }
 
     public GUI() {
+
         setLayout(new BorderLayout());
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 600);
@@ -124,7 +136,7 @@ public class GUI extends JFrame {
         pack();
         setVisible(true);
 
-        runScript.addActionListener(new scriptActiomListener(SCRIPTS_CLASSIFICATION, datasetNames, nameToPath,
+        runScript.addActionListener(new scriptActiomListener(scriptsClassification, datasetNames, nameToPath,
                 datasetChooser, textArea, scriptNames, scriptChooser));
 
     }
@@ -152,7 +164,7 @@ public class GUI extends JFrame {
         addToToolbar(taskChooser);
 
         scriptChooser = new JComboBox(scriptNames.toArray());
-        SCRIPTS_CLASSIFICATION.forEach((name, script) -> addToMethodList(name));
+        initScripts(taskChooser.getSelectedItem().toString());
 
         methodLabel = new JLabel("Method: ");
         addToToolbar(methodLabel);
@@ -165,15 +177,52 @@ public class GUI extends JFrame {
         return toolbar;
     }
 
-    private void addToDatasetList(String name, String path) {
+    @NotNull
+    public static String currentTask() {
+        return taskChooser.getSelectedItem().toString();
+    }
+
+    private void addToDatasetList(@NotNull final String name, @NotNull final String path) {
         datasetNames.add(name);
         nameToPath.put(name, path);
         datasetChooser.addItem(name);
     }
 
-    private void addToMethodList(String name) {
+    private void addToMethodList(@NotNull final String name) {
         scriptNames.add(name);
         scriptChooser.addItem(name);
+    }
+
+
+    private void initScripts(@NotNull final String task) {
+        String path = PATH_TO_RESOURCES + task;
+        try (Stream<String> stream = Files.lines(Paths.get(path + "/ArgsFile"))) {
+            stream.forEach(line -> parseClassificationScriptLine(task, line, path));
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+    private void parseClassificationScriptLine(@NotNull final String task,
+                                               @NotNull final String line, @NotNull final String path) {
+        String[] nameAndArgs = line.split(":");
+        String label = nameAndArgs[0].replaceAll("\\s", "");
+//        System.out.println(line);
+        addToMethodList(label);
+        String[] args = nameAndArgs[1].split(",");
+        facroryTast(task).put(label, new Script(args[0], path, args));
+    }
+
+    @NotNull
+    private static Map<String, Script> facroryTast(@NotNull final String task) throws RuntimeException {
+        switch (task) {
+            case "classification":
+                return scriptsClassification;
+            case "regression":
+                return scriptRegression;
+            default:
+                throw new RuntimeException();
+        }
     }
 }
 
