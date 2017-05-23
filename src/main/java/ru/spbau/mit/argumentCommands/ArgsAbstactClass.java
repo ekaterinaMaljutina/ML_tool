@@ -19,6 +19,7 @@ public abstract class ArgsAbstactClass {
         gridY = 0;
         return gridY;
     }
+
     protected int incGridX() {
         return ++gridX;
     }

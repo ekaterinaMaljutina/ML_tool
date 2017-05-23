@@ -48,7 +48,7 @@ public abstract class ScriptArgsRegressionAbstractClass extends ArgsAbstactClass
     protected void init() {
         //degree
         constraints.gridx = zeroGridX();
-        constraints.gridy = zeroGridY();
+        constraints.gridy = incGridY();
         constraints.fill = GridBagConstraints.PAGE_START;
         argPanel.add(degreeLabel, constraints);
         constraints.gridx = incGridX();
@@ -63,6 +63,5 @@ public abstract class ScriptArgsRegressionAbstractClass extends ArgsAbstactClass
         constraints.gridx = incGridX();
         constraints.fill = GridBagConstraints.HORIZONTAL;
         argPanel.add(splitSpinner, constraints);
-
     }
 }

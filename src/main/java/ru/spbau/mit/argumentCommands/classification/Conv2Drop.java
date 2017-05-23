@@ -16,6 +16,7 @@ public class Conv2Drop extends ScriptArgsClassificationAbstractClass {
 
     {
         dropValue.setEditor(new JSpinner.NumberEditor(dropValue, FORMAT_DROP));
+        dropValue.setName("drop");
     }
 
 

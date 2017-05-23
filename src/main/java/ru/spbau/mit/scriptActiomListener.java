@@ -27,6 +27,7 @@ public final class scriptActiomListener implements ActionListener {
     private class RunnerScript extends Thread {
         @Override
         public void run() {
+            scriptChosserActionLisner.zerosProgressBar();
             Script currentScript = GUI.currentScript();
             String scriptPath = currentScript.fullPath();
 
@@ -66,6 +67,7 @@ public final class scriptActiomListener implements ActionListener {
                 System.out.println(ex.getMessage());
                 interrupt();
             }
+            scriptChosserActionLisner.updateProgressBar(100);
         }
     }
 }

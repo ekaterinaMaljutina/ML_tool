@@ -47,9 +47,13 @@ public class GUI extends JFrame {
     }};
 
     private scriptChosserActionLisner chosserActionLisner;
+    private JProgressBar progressBar = new JProgressBar(0, 100);
+
 
     {
         runScript = new JButton("Run");
+        progressBar.setValue(0);
+        progressBar.setStringPainted(true);
 
         fileChooser = new JFileChooser();
         datasetButton = new JButton("Dataset: ");
@@ -81,7 +85,7 @@ public class GUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 scriptChooser.removeAllItems();
-                switch ((String) taskChooser.getSelectedItem()) {
+                switch (taskChooser.getSelectedItem().toString()) {
                     case "regression":
                         if (scriptRegression.isEmpty()) {
                             initScripts("regression");

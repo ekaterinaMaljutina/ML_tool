@@ -22,16 +22,31 @@ public class scriptChosserActionLisner implements ActionListener {
     private static ArgsAbstactClass currentScript;
 
     private Frame currenrFrame;
+    private static JProgressBar progressBar = new JProgressBar();
+    private static int valueProgressBar = 0;
 
     public scriptChosserActionLisner(@NotNull Frame frame,
                                      @NotNull final String initNameScript) {
         currenrFrame = frame;
         panel = new JPanel();
+        progressBar.setValue(0);
+        progressBar.setStringPainted(true);
+        panel.add(progressBar);
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         currenrFrame.add(panel, BorderLayout.WEST);
         currenrFrame.repaint();
         factoryTaskChooserArgs(GUI.currentTask(), initNameScript);
 
+    }
+
+    public static void updateProgressBar(int value) {
+        valueProgressBar += value;
+        progressBar.setValue(valueProgressBar);
+    }
+
+    public static void zerosProgressBar() {
+        valueProgressBar = 0;
+        progressBar.setValue(valueProgressBar);
     }
 
     public static @Nullable String getPanelValue(@NotNull final String name) {
@@ -45,6 +60,9 @@ public class scriptChosserActionLisner implements ActionListener {
     public void actionPerformed(ActionEvent e) {
 
         panel.removeAll();
+
+        zerosProgressBar();
+        panel.add(progressBar);
         List<String[]> getSelectItem = Arrays.stream(e.getSource()
                 .toString().split(","))
                 .filter(s -> s.split("=").length == 2)

@@ -21,6 +21,7 @@ public class IntupListenerProcess extends Thread {
             while ((value = is.read()) != -1) {
                 out.append(String.valueOf((char) value));
                 out.setCaretPosition(out.getDocument().getLength());
+                scriptChosserActionLisner.updateProgressBar(1);
             }
         } catch (IOException exp) {
             exp.printStackTrace();

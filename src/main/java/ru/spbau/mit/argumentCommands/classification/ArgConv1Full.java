@@ -13,6 +13,10 @@ public class ArgConv1Full extends ScriptArgsClassificationAbstractClass {
         addItem("sigmoid");
     }};
 
+    {
+        func_act.setName("func_act");
+    }
+
     @Override
     public @NotNull JPanel drawComponents(@NotNull JPanel panel) {
         init();
