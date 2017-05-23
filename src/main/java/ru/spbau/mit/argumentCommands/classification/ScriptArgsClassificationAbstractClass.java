@@ -2,6 +2,7 @@ package ru.spbau.mit.argumentCommands.classification;
 
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.spbau.mit.argumentCommands.ArgsAbstactClass;
 
 import javax.swing.*;
@@ -37,6 +38,10 @@ abstract public class ScriptArgsClassificationAbstractClass extends ArgsAbstactC
         constraints.weightx = 0.5;
     }
 
+    @Override
+    public @Nullable String getValueArg(@NotNull String key) {
+        return null;
+    }
 
     protected void init() {
         //epoch

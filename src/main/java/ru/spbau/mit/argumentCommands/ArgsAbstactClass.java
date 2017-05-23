@@ -1,6 +1,7 @@
 package ru.spbau.mit.argumentCommands;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
@@ -26,8 +27,7 @@ public abstract class ArgsAbstactClass {
         return ++gridY;
     }
 
-
-    abstract public @NotNull String getValueArg(@NotNull final String key);
+    abstract public @Nullable String getValueArg(@NotNull final String key);
 
     abstract public @NotNull JPanel drawComponents(@NotNull JPanel panel);
 }

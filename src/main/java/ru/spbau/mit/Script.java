@@ -5,7 +5,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -25,11 +27,11 @@ public final class Script {
         fullPath = p.toAbsolutePath().getParent().toString();
 
         for (String argName : args) {
-            arguments.put(argName, VALUE_ARG);
+            arguments.put(argName.replaceAll(" ", ""), VALUE_ARG);
         }
     }
 
-    public boolean getArgValue(@NotNull final String key,
+    public boolean setArgValue(@NotNull final String key,
                                @NotNull final String value) {
         boolean res = arguments.containsKey(key);
         if (res) {
@@ -38,13 +40,30 @@ public final class Script {
         return res;
     }
 
+    public void setOtherArgs() {
+        arguments.forEach((key, value) -> {
+            String arg = scriptChosserActionLisner.getPanelValue(key);
+            if (arg != null) {
+                setArgValue(key, arg);
+            }
+        });
+    }
+
     @Nullable
-    public final String returnArgScript() {
+    public final List<String> returnArgScript() {
         String res = "";
-        return arguments.entrySet().stream()
-                .filter(stringStringEntry -> stringStringEntry.getValue() != "")
-                .map(entry -> getArg(entry.getKey(), entry.getValue()))
-                .collect(Collectors.joining(" "));
+        List<String> values = arguments.values().stream().collect(Collectors.toList());
+        List<String> keys = arguments.keySet().stream().collect(Collectors.toList());
+        List<String> args = new ArrayList<>();
+
+        for (int i = 0; i < keys.size(); i++) {
+            if (values.get(i) != "") {
+                args.add("--" + keys.get(i));
+                args.add(values.get(i));
+            }
+        }
+
+        return args;
     }
 
     @NotNull
@@ -59,11 +78,5 @@ public final class Script {
 
     public String fullPath() {
         return fullPath + "/" + name + ".py";
-    }
-
-    @NotNull
-    private String getArg(@NotNull final String name, @NotNull final String value) {
-
-        return String.format(" -%s %s", name, value);
     }
 }

@@ -1,9 +1,12 @@
 package ru.spbau.mit.argumentCommands.regression;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.spbau.mit.argumentCommands.ArgsAbstactClass;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Arrays;
 
 public abstract class ScriptArgsRegressionAbstractClass extends ArgsAbstactClass {
 
@@ -18,11 +21,27 @@ public abstract class ScriptArgsRegressionAbstractClass extends ArgsAbstactClass
     protected GridBagConstraints constraints = new GridBagConstraints();
 
     {
+        degree.setName("degree");
+        splitSpinner.setName("split");
         constraints.anchor = GridBagConstraints.FIRST_LINE_START;
         argPanel = new JPanel();
         argPanel.setLayout(new GridBagLayout());
         constraints.fill = GridBagConstraints.NONE;
         constraints.weightx = 0.5;
+    }
+
+    @Override
+    public @Nullable String getValueArg(@NotNull String key) {
+        java.util.List<Component> components = Arrays.asList(argPanel.getComponents());
+        for (Component component : components) {
+            if (component.getName() != null && component.getName().equals(key)) {
+                JSpinner spinner = (JSpinner)component;
+                System.out.println(component.getName() + " " + key + " " + key.equals(component.getName()) +
+                        " " + spinner.getValue().toString());
+                return spinner.getValue().toString();
+            }
+        }
+        return null;
     }
 
 

@@ -1,6 +1,7 @@
 package ru.spbau.mit;
 
 import com.sun.istack.internal.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -37,15 +38,15 @@ public class GUI extends JFrame {
 
     private JToolBar toolbar;
     private JButton datasetButton;
-    private JComboBox datasetChooser;
     private DataActionListener datasetListener;
     private JLabel methodLabel;
-    private JComboBox scriptChooser;
     private JFileChooser fileChooser;
     private JTextArea textArea;
     private JButton runScript;
-
     private JLabel taskLabel = new JLabel("Task :");
+
+    private static JComboBox scriptChooser;
+    private static JComboBox datasetChooser;
     private static JComboBox taskChooser = new JComboBox() {{
         addItem("regression");
         addItem("classification");
@@ -53,9 +54,10 @@ public class GUI extends JFrame {
     }};
 
     private List<String> scriptNames = new ArrayList<>();
-    private List<String> datasetNames = new ArrayList<>(Arrays.asList("notMNIST.pickle"));
-    private Map<String, String> nameToPath = new HashMap<String, String>() {{
-        put(datasetNames.get(0), PATH_TO_RESOURCES);
+    private static List<String> datasetNames = new ArrayList<>(Arrays.asList("notMNIST.pickle", "noisysine.csv"));
+    private static Map<String, String> nameToPath = new HashMap<String, String>() {{
+        datasetNames.stream().forEach(s -> put(s, PATH_TO_RESOURCES));
+//        put(datasetNames.get(0), PATH_TO_RESOURCES);
     }};
 
     private scriptChosserActionLisner chosserActionLisner;
@@ -136,8 +138,7 @@ public class GUI extends JFrame {
         pack();
         setVisible(true);
 
-        runScript.addActionListener(new scriptActiomListener(scriptsClassification, datasetNames, nameToPath,
-                datasetChooser, textArea, scriptNames, scriptChooser));
+        runScript.addActionListener(new scriptActiomListener(textArea));
 
     }
 
@@ -206,12 +207,23 @@ public class GUI extends JFrame {
     private void parseClassificationScriptLine(@NotNull final String task,
                                                @NotNull final String line, @NotNull final String path) {
         String[] nameAndArgs = line.split(":");
-        String label = nameAndArgs[0].replaceAll("\\s", "");
-//        System.out.println(line);
+        String label = nameAndArgs[0].replaceAll(" ", "");
         addToMethodList(label);
         String[] args = nameAndArgs[1].split(",");
-        facroryTast(task).put(label, new Script(args[0], path, args));
+        facroryTast(task).put(label, new Script(args[0].replace(" ", ""), path, args));
     }
+
+    @Nullable
+    public static Script currentScript() {
+        return facroryTast(taskChooser.getSelectedItem().toString()).get(scriptChooser.getSelectedItem().toString());
+    }
+
+    @Nullable
+    public static String datasetName() {
+        String name = datasetNames.get(datasetChooser.getSelectedIndex());
+        return nameToPath.get(name) + name;
+    }
+
 
     @NotNull
     private static Map<String, Script> facroryTast(@NotNull final String task) throws RuntimeException {

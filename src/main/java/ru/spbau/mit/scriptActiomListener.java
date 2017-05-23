@@ -11,47 +11,38 @@ public final class scriptActiomListener implements ActionListener {
     private static final String PYTHON2 = "python";
 
     private RunnerScript runnerScript;
-
-    private final Map<String, Script> nameToScropt;
-    private final List<String> datasetNames;
-    private final Map<String, String> nameToPath;
-    private final List<String> scriptNames;
-
-    private JComboBox scriptChooser;
-    private JComboBox datasetChooser;
     private JTextArea textArea;
 
-    scriptActiomListener(Map<String, Script> nameToScropt, List<String> datasetNames, Map<String, String> nameToPath,
-                         JComboBox datasetChooser, JTextArea textArea, List<String> scriptNames, JComboBox scriptChooser) {
-        this.scriptNames = scriptNames;
-        this.nameToPath = nameToPath;
-        this.nameToScropt = nameToScropt;
-        this.datasetNames = datasetNames;
-        this.datasetChooser = datasetChooser;
+    scriptActiomListener(JTextArea textArea) {
         this.textArea = textArea;
-        this.scriptChooser = scriptChooser;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         runnerScript = new RunnerScript();
         runnerScript.start();
-
     }
 
     private class RunnerScript extends Thread {
         @Override
         public void run() {
-            Script currentScript = nameToScropt.get(scriptNames.get(scriptChooser.getSelectedIndex()));
+            Script currentScript = GUI.currentScript();
             String scriptPath = currentScript.fullPath();
-            String nameData = datasetNames.get(datasetChooser.getSelectedIndex());
-            String pathToData = nameToPath.get(nameData);
-            currentScript.getArgValue("data", pathToData+nameData);
 
+            currentScript.setArgValue("data", GUI.datasetName());
+            currentScript.setOtherArgs();
+//            scriptChosserActionLisner.getPanelValue("degree");
 
             Runtime r = Runtime.getRuntime();
+            System.out.println(scriptPath);
+
+            List<String> args = currentScript.returnArgScript();
+            args.add(0, PYTHON2);
+            args.add(1, scriptPath);
             ProcessBuilder processBuilder = new ProcessBuilder()
-                    .command(PYTHON2, scriptPath, "--data", pathToData + nameData); //currentScript.returnArgScript());
+                    .command(args.toArray(new String[0]));
+            //PYTHON2, scriptPath, currentScript.returnArgScript().toArray(new String[0]) );
+            //"--data", pathToData + nameData); //currentScript.returnArgScript());
 
             Process proc;
             processBuilder.command().stream().forEach(s -> System.out.print(s));

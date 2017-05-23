@@ -1,6 +1,7 @@
 package ru.spbau.mit;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.spbau.mit.argumentCommands.ArgsAbstactClass;
 import ru.spbau.mit.argumentCommands.FactoryArgScript;
 
@@ -17,8 +18,10 @@ public class scriptChosserActionLisner implements ActionListener {
 
     private static final String FORMAT = "0.000000";
 
+    private static JPanel panel;
+    private static ArgsAbstactClass currentScript;
+
     private Frame currenrFrame;
-    private JPanel panel;
 
     public scriptChosserActionLisner(@NotNull Frame frame,
                                      @NotNull final String initNameScript) {
@@ -31,6 +34,12 @@ public class scriptChosserActionLisner implements ActionListener {
 
     }
 
+    public static @Nullable String getPanelValue(@NotNull final String name) {
+        if (currentScript != null) {
+            return currentScript.getValueArg(name);
+        }
+        return null;
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -55,7 +64,7 @@ public class scriptChosserActionLisner implements ActionListener {
     }
 
     private void factoryTaskChooserArgs(@NotNull final String task, @NotNull final String scriptName) {
-        ArgsAbstactClass currentScript = null;
+        currentScript = null;
         switch (task) {
             case "classification":
                 currentScript = FactoryArgScript.getArgsClassificationScriptByName(scriptName);

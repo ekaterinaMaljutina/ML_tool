@@ -11,10 +11,14 @@ public class RidgeRegression extends ScriptArgsRegressionAbstractClass {
             1.0, 1e-14));
     private JLabel alphaLabel = new JLabel("alpha = ", JLabel.LEFT);
 
-    @Override
-    public @NotNull String getValueArg(@NotNull String key) {
-        return null;
+    {
+        alphaSpinner.setName("alpha");
     }
+
+//    @Override
+//    public @NotNull String getValueArg(@NotNull String key) {
+//        return null;
+//    }
 
     @Override
     public @NotNull JPanel drawComponents(@NotNull JPanel panel) {
