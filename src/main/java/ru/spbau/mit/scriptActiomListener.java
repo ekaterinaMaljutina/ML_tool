@@ -45,7 +45,7 @@ public final class scriptActiomListener implements ActionListener {
             ProcessBuilder processBuilder = new ProcessBuilder()
                     .command(args.toArray(new String[0]));
             Process proc;
-            processBuilder.command().stream().forEach(s -> System.out.print(s));
+            processBuilder.command().forEach(s -> System.out.print(s));
             System.out.println("");
 
             try {

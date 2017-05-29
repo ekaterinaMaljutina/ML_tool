@@ -1,7 +1,10 @@
 package ru.spbau.mit;
 
 import com.sun.istack.internal.NotNull;
+import com.sun.org.apache.regexp.internal.RE;
 import org.jetbrains.annotations.Nullable;
+import ru.spbau.mit.startScreen.ChooseFileFX;
+import ru.spbau.mit.startScreen.TaskScreen;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,11 +16,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
 public class GUI extends JFrame {
     private static final String PATH_TO_RESOURCES = "src/main/resources/";
+
+    private static final String CLASSIFICATION = "classification";
+    private static final String REGRESSION = "regression";
 
     private static final String PYTHON2 = "python2";
 
@@ -38,12 +45,23 @@ public class GUI extends JFrame {
     private static JComboBox taskChooser = new JComboBox() {{
         addItem("regression");
         addItem("classification");
+        if (TaskScreen.isClassification()) {
+            setSelectedIndex(1);
+        }
     }};
 
     private List<String> scriptNames = new ArrayList<>();
-    private static List<String> datasetNames = new ArrayList<>(Arrays.asList("notMNIST.pickle", "noisysine.csv"));
+    private static List<String> datasetNames = new ArrayList<>(Arrays.asList("notMNIST.pickle", "noisysine.csv",
+            ChooseFileFX.getChooseFile()));
     private static Map<String, String> nameToPath = new HashMap<String, String>() {{
-        datasetNames.stream().forEach(s -> put(s, PATH_TO_RESOURCES));
+        datasetNames = datasetNames.stream()
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        datasetNames.forEach(s -> put(s, PATH_TO_RESOURCES));
+        datasetChooser = new JComboBox(datasetNames.toArray());
+        if (ChooseFileFX.getChooseFile() != null) {
+            datasetChooser.setSelectedIndex(datasetChooser.getItemCount() - 1);
+        }
     }};
 
     private scriptChosserActionLisner chosserActionLisner;
@@ -86,16 +104,16 @@ public class GUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 scriptChooser.removeAllItems();
                 switch (taskChooser.getSelectedItem().toString()) {
-                    case "regression":
+                    case REGRESSION:
                         if (scriptRegression.isEmpty()) {
-                            initScripts("regression");
+                            initScripts(REGRESSION);
                         } else {
                             scriptRegression.forEach((name, script) -> addToMethodList(name));
                         }
                         break;
-                    case "classification":
+                    case CLASSIFICATION:
                         if (scriptsClassification.isEmpty()) {
-                            initScripts("classification");
+                            initScripts(CLASSIFICATION);
                         } else {
                             scriptsClassification.forEach((name, script) -> addToMethodList(name));
                         }
@@ -148,8 +166,7 @@ public class GUI extends JFrame {
         toolbar = new JToolBar();
 
         addToToolbar(datasetButton);
-        datasetChooser =
-                new JComboBox(datasetNames.toArray());
+
         datasetChooser.setSelectedIndex(0);
         toolbar.putClientProperty("chooserData", datasetChooser);
         addToToolbar(datasetChooser);
@@ -221,13 +238,20 @@ public class GUI extends JFrame {
     @NotNull
     private static Map<String, Script> facroryTast(@NotNull final String task) throws RuntimeException {
         switch (task) {
-            case "classification":
+            case CLASSIFICATION:
                 return scriptsClassification;
-            case "regression":
+            case REGRESSION:
                 return scriptRegression;
             default:
                 throw new RuntimeException();
         }
+    }
+
+    public static boolean isClassification() {
+        if (taskChooser == null || taskChooser.getItemCount() == 0) {
+            return false;
+        }
+        return taskChooser.getSelectedItem().toString().equals(CLASSIFICATION);
     }
 }
 

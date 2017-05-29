@@ -47,6 +47,13 @@ public class TaskScreen extends Application {
         currentStage.setScene(startScreen);
         currentStage.show();
     }
+    public static boolean isRegression() {
+        return chooseRegression;
+    }
+
+    public static boolean isClassification() {
+        return chooseClassification;
+    }
 
     private static void initTask() {
         regressionTask = new Text();

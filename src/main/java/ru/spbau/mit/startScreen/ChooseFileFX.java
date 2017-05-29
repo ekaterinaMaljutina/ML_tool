@@ -24,6 +24,7 @@ public class ChooseFileFX extends Application {
     private static Button next;
     private static Button prev;
     private static GridPane gridPane;
+    private static Label text;
     private static Scene startScreen;
     private static Text fileChoose;
     private static Stage currentStage;
@@ -56,6 +57,14 @@ public class ChooseFileFX extends Application {
         fileChoose = Utils.initTextBlend(fileChoose, 25);
         fileChoose.setText("choose yuor file");
         fileChoose.addEventFilter(MouseEvent.MOUSE_CLICKED, fileChooserEventHandler);
+        if (currentFileChooder == null) {
+            return;
+        }
+
+        text = new Label();
+        text.setText("your choose : " + currentFileChooder);
+        text.setWrapText(true);
+
     }
 
     private static void initFileChooserEventHandler() {
@@ -70,7 +79,7 @@ public class ChooseFileFX extends Application {
                     remoteEvent();
                     fileChoose.setText("\tGood\t");
                     Label text = new Label();
-                    text.setText("your choose : " + file);
+                    text.setText("file: " + file);
                     text.setWrapText(true);
                     gridPane.add(text, 1, 2);
 
@@ -95,6 +104,10 @@ public class ChooseFileFX extends Application {
         gridPane.add(prev, 0, 2);
         GridPane.setHalignment(prev, HPos.LEFT);
         gridPane.add(next, 2, 2);
+
+        if (currentFileChooder != null) {
+            gridPane.add(text, 1, 2);
+        }
         GridPane.setHalignment(next, HPos.RIGHT);
     }
 
@@ -115,6 +128,9 @@ public class ChooseFileFX extends Application {
         EventHandler<MouseEvent> nextEventHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent e) {
+                if (currentFileChooder == null) {
+                    return;
+                }
                 TASK_SCREEN.start(currentStage);
             }
         };
