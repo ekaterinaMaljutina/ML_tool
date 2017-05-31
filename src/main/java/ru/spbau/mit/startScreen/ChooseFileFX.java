@@ -55,7 +55,7 @@ public class ChooseFileFX extends Application {
     private static void initFileChooser() {
         fileChoose = new Text();
         fileChoose = Utils.initTextBlend(fileChoose, 25);
-        fileChoose.setText("choose yuor file");
+        fileChoose.setText("Choose your file");
         fileChoose.addEventFilter(MouseEvent.MOUSE_CLICKED, fileChooserEventHandler);
         if (currentFileChooder == null) {
             return;
