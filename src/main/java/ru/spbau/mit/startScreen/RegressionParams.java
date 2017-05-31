@@ -3,10 +3,12 @@ package ru.spbau.mit.startScreen;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -24,6 +26,7 @@ public class RegressionParams extends Application {
 
     private static RegressionType type = RegressionType.None;
 
+    private String nameScript;
     private String[] args;
     private String[] initValue;
 
@@ -70,12 +73,10 @@ public class RegressionParams extends Application {
     }
 
     private void initChild() {
+        initRunButton();
+
         String nameMethod = type.name();
         getArgument(nameMethod);
-
-        run = new Button();
-        run.setText("Run");
-        run = Utils.setStyle(run);
 
         text = new Text[args.length];
         spinners = new Spinner[args.length];
@@ -87,30 +88,50 @@ public class RegressionParams extends Application {
         }
     }
 
-    private void initArgs(@NotNull String line, @NotNull final String method) {
+    private void initRunButton() {
+
+        run = new Button();
+        run.setText("Run");
+        run = Utils.setStyle(run);
+
+        EventHandler<MouseEvent> runEventHandler = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent e) {
+                System.out.println("Run script");
+            }
+        };
+
+        run.addEventFilter(MouseEvent.MOUSE_CLICKED, runEventHandler);
+    }
+
+    private void findNameMethod(@NotNull String line, @NotNull final String method) {
         String[] nameAndArgs = line.split(":");
         String label = nameAndArgs[0].replaceAll(" ", "");
 
         if (label.equals(method)) {
-            String[] params = nameAndArgs[1].replaceAll(" ", "").split(",");
-            args = new String[params.length - 1];
-            initValue = new String[params.length - 1];
+            initArgs(nameAndArgs[1].replaceAll(" ", "").split(","));
+        }
+    }
 
-            for (int i = 0; i < args.length; i++) {
-                String[] value = params[i + 1].split("#");
-                args[i] = value[0];
-                if (value.length == 1) {
-                    initValue[i] = ChooseFileFX.getChooseFile();
-                } else {
-                    initValue[i] = value[1];
-                }
+    private void initArgs(String[] params) {
+        nameScript = params[0];
+        args = new String[params.length - 1];
+        initValue = new String[params.length - 1];
+
+        for (int i = 0; i < args.length; i++) {
+            String[] value = params[i + 1].split("#");
+            args[i] = value[0];
+            if (value.length == 1) { // only data with length = 1
+                initValue[i] = ChooseFileFX.getChooseFile();
+            } else {
+                initValue[i] = value[1];
             }
         }
     }
 
     private void getArgument(@NotNull final String method) {
         try (Stream<String> stream = Files.lines(Paths.get(PATH_TO_ARGS))) {
-            stream.forEach(line -> initArgs(line, method));
+            stream.forEach(line -> findNameMethod(line, method));
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
