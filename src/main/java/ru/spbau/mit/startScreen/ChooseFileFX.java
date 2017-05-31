@@ -30,7 +30,7 @@ public class ChooseFileFX extends Application {
     private static Stage currentStage;
     private static FileChooser fileChooser;
     private static EventHandler<MouseEvent> fileChooserEventHandler;
-    private static String currentFileChooder = null;
+    private static String currentFileChooder = "/src/main/resources/noisysine.csv";
 
     static {
         initFileChooserEventHandler();

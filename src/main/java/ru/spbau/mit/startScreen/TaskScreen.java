@@ -18,6 +18,8 @@ public class TaskScreen extends Application {
 
     private static final ChooseFileFX CHOOSE_FILE_FX = new ChooseFileFX();
 
+    private static final RegressionMethodScreen REGRESSION_METHOD_SCREEN = new RegressionMethodScreen();
+
     private static final String CLASSIFICATION_TEXT = "Classification";
     private static final String REGRESSION_TEXT = "Regression";
     private static final String GOOD_TEXT = "Good";
@@ -106,7 +108,10 @@ public class TaskScreen extends Application {
             @Override
             public void handle(MouseEvent e) {
                 currentStage.close();
-                Main.main(null);
+//                Main.main(null);
+                if (chooseRegression) {
+                    REGRESSION_METHOD_SCREEN.start(currentStage);
+                }
             }
         };
 
