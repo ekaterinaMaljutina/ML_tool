@@ -2,6 +2,8 @@ package ru.spbau.mit.startScreen;
 
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
@@ -17,12 +19,15 @@ import org.jetbrains.annotations.NotNull;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class RegressionParams extends Application {
 
-    private static final String PATH_TO_ARGS = "src/main/resources/regression/ArgsFile";
+    private static final String PATH_TO_REGRESSION = "src/main/resources/regression";
+    private static final String PATH_TO_ARGS = PATH_TO_REGRESSION + "/ArgsFile";
 
     private static RegressionType type = RegressionType.None;
 
@@ -59,11 +64,20 @@ public class RegressionParams extends Application {
 
         for (int i = 0; i < text.length; i++) {
             SpinnerValueFactory<String> valueFactory;
+            final int idx = i;
             valueFactory =
                     new SpinnerValueFactory.ListSpinnerValueFactory<String>(
                             FXCollections.observableArrayList(initValue[i]));
             spinners[i].setValueFactory(valueFactory);
             spinners[i].setEditable(true);
+            spinners[i].valueProperty().addListener(new ChangeListener<String>() {
+                @Override
+                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    initValue[idx] = newValue;
+//                    System.out.println(String.format("%s old value, %s new value, %s idx, %s initValue",
+//                            oldValue, newValue, idx, initValue[idx]));
+                }
+            });
             gridPane.add(text[i], 0, i);
             gridPane.add(spinners[i], 1, i);
         }
@@ -97,6 +111,7 @@ public class RegressionParams extends Application {
         EventHandler<MouseEvent> runEventHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent e) {
+                System.out.println(createListArgsForProcessBuilder());
                 System.out.println("Run script");
             }
         };
@@ -135,5 +150,14 @@ public class RegressionParams extends Application {
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
+    }
+
+    private List<String> createListArgsForProcessBuilder() {
+        List<String> res = new ArrayList<>();
+        for (int i = 0; i < args.length; i++) {
+            res.add("--" + args[i]);
+            res.add(initValue[i]);
+        }
+        return res;
     }
 }
