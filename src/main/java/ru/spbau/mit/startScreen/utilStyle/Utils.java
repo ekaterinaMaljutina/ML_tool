@@ -1,4 +1,4 @@
-package ru.spbau.mit.startScreen;
+package ru.spbau.mit.startScreen.utilStyle;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -14,9 +14,6 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * Created by kate on 5/25/17.
- */
 public class Utils {
     public static Text initTextBlend(@NotNull final Text text, final int frontSize) {
         text.setFont(Font.font("verdana", FontWeight.BOLD, FontPosture.REGULAR, frontSize));

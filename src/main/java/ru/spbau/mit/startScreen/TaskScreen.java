@@ -11,7 +11,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import ru.spbau.mit.Main;
+import ru.spbau.mit.startScreen.utilStyle.Utils;
 
 
 public class TaskScreen extends Application {

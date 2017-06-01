@@ -1,5 +1,7 @@
 package ru.spbau.mit;
 
+import org.jetbrains.annotations.Nullable;
+
 import javax.swing.*;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,7 +14,7 @@ public class IntupListenerProcess extends Thread {
     private final BufferedReader is;
     private final JTextArea out;
 
-    public IntupListenerProcess(InputStream s, JTextArea textArea) {
+    public IntupListenerProcess(InputStream s, @Nullable JTextArea textArea) {
         is = new BufferedReader(new InputStreamReader(s));
         out = textArea;
     }
@@ -23,8 +25,9 @@ public class IntupListenerProcess extends Thread {
         try {
             String value = null;
             while ((value = is.readLine()) != null) {
-                out.append(value + "\n");
-                out.setCaretPosition(out.getDocument().getLength());
+                System.out.println(value);
+//                out.append(value + "\n");
+//                out.setCaretPosition(out.getDocument().getLength());
                 if (GUI.isClassification()) {
                     if (value.contains("time")) {
                         Pattern pattern = Pattern.compile("time:(.*?)s");

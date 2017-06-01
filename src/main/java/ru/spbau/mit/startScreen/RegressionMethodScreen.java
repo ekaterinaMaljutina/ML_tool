@@ -12,6 +12,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.spbau.mit.startScreen.utilStyle.Utils;
 
 public class RegressionMethodScreen extends Application {
     private static final String LINEAR_REGRESSION = "Linear Regression";

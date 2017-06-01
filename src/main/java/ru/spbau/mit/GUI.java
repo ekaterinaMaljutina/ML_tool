@@ -5,6 +5,7 @@ import com.sun.org.apache.regexp.internal.RE;
 import org.jetbrains.annotations.Nullable;
 import ru.spbau.mit.startScreen.ChooseFileFX;
 import ru.spbau.mit.startScreen.TaskScreen;
+import ru.spbau.mit.utilScript.LoadScript;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,6 +26,8 @@ public class GUI extends JFrame {
 
     private static final String CLASSIFICATION = "classification";
     private static final String REGRESSION = "regression";
+    private static final String ARGS_FILE = "/ArgsFile";
+
 
     private static final String PYTHON2 = "python2";
 
@@ -207,20 +210,11 @@ public class GUI extends JFrame {
 
     private void initScripts(@NotNull final String task) {
         String path = PATH_TO_RESOURCES + task;
-        try (Stream<String> stream = Files.lines(Paths.get(path + "/ArgsFile"))) {
-            stream.forEach(line -> parseClassificationScriptLine(task, line, path));
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
+        LoadScript.LoadArgs(path + ARGS_FILE, path);
+        for (Map.Entry<String, Script> entry : LoadScript.getLabelToScriptMap().entrySet()) {
+            addToMethodList(entry.getKey());
+            facroryTast(task).put(entry.getKey(), entry.getValue());
         }
-    }
-
-    private void parseClassificationScriptLine(@NotNull final String task,
-                                               @NotNull final String line, @NotNull final String path) {
-        String[] nameAndArgs = line.split(":");
-        String label = nameAndArgs[0].replaceAll(" ", "");
-        addToMethodList(label);
-        String[] args = nameAndArgs[1].split(",");
-        facroryTast(task).put(label, new Script(args[0].replace(" ", ""), path, args));
     }
 
     @Nullable

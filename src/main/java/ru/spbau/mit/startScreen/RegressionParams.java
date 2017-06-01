@@ -2,10 +2,9 @@ package ru.spbau.mit.startScreen;
 
 
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.EventHandler;
+import javafx.geometry.HPos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Spinner;
@@ -17,29 +16,32 @@ import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.jetbrains.annotations.NotNull;
 import ru.spbau.mit.ProcessBuider;
+import ru.spbau.mit.Script;
+import ru.spbau.mit.startScreen.utilStyle.Utils;
+import ru.spbau.mit.utilScript.LoadScript;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public class RegressionParams extends Application {
 
     private static final String PATH_TO_REGRESSION = "src/main/resources/regression";
     private static final String PATH_TO_ARGS = PATH_TO_REGRESSION + "/ArgsFile";
+    private static final RegressionMethodScreen REGRESSION_METHOD_SCREEN = new RegressionMethodScreen();
 
     private static RegressionType type = RegressionType.None;
 
     private String nameScript;
-    private String[] args;
-    private String[] initValue;
 
     private Text[] text;
     private Spinner<String>[] spinners;
     private Button run;
+    private Button prev;
 
     private Stage currentStage;
     private Scene startScreen;
@@ -61,16 +63,8 @@ public class RegressionParams extends Application {
 
     private <T> void commitEditorText(Spinner<T> spinner, int idx) {
         if (!spinner.isEditable()) return;
-        String text = spinner.getEditor().getText();
-        initValue[idx] = text;
-        SpinnerValueFactory<T> valueFactory = spinner.getValueFactory();
-        if (valueFactory != null) {
-            StringConverter<T> converter = valueFactory.getConverter();
-            if (converter != null) {
-                T value = converter.fromString(text);
-                valueFactory.setValue(value);
-            }
-        }
+        String value = spinner.getEditor().getText();
+        LoadScript.setValue(nameScript, text[idx].getText(), value);
     }
 
 
@@ -78,13 +72,16 @@ public class RegressionParams extends Application {
         initChild();
 
         gridPane = Utils.initGridPane();
-
+        if (text == null) {
+            return;
+        }
         for (int i = 0; i < text.length; i++) {
             SpinnerValueFactory<String> valueFactory;
             final int idx = i;
             valueFactory =
                     new SpinnerValueFactory.ListSpinnerValueFactory<String>(
-                            FXCollections.observableArrayList(initValue[i]));
+                            FXCollections.observableArrayList(LoadScript.getInitArgsValueByLabel(nameScript,
+                                    text[i].getText())));
             spinners[i].setValueFactory(valueFactory);
             spinners[i].setEditable(true);
 
@@ -94,27 +91,33 @@ public class RegressionParams extends Application {
 //                        oldValue, newValue, idx, initValue[idx]));
                 commitEditorText(spinners[idx], idx);
             });
-            gridPane.add(text[i], 0, i);
-            gridPane.add(spinners[i], 1, i);
+            gridPane.add(text[i], 1, i);
+            gridPane.add(spinners[i], 2, i);
         }
-        gridPane.add(run, 2, text.length);
+        gridPane.add(prev, 0, text.length);
+        GridPane.setHalignment(prev, HPos.LEFT);
+        gridPane.add(run, 3, text.length);
+        GridPane.setHalignment(run, HPos.RIGHT);
         gridPane.setVgap(5);
         gridPane.setHgap(10);
     }
 
     private void initChild() {
         initRunButton();
+        initPrevButton();
 
-        String nameMethod = type.name();
-        getArgument(nameMethod);
+        nameScript = type.name();
+        loadScripts();
 
-        text = new Text[args.length];
-        spinners = new Spinner[args.length];
-        for (int i = 0; i < args.length; i++) {
+        text = new Text[LoadScript.getSizeArgByLabel(nameScript)];
+        spinners = new Spinner[text.length];
+        int i = 0;
+        for (String value : LoadScript.getSetArgByLabel(nameScript)) {
             text[i] = new Text();
             spinners[i] = new Spinner<>();
             text[i] = Utils.initTextBlend(text[i], 14);
-            text[i].setText(args[i]);
+            text[i].setText(value);
+            i++;
         }
     }
 
@@ -131,7 +134,7 @@ public class RegressionParams extends Application {
                 System.out.println(createListArgsForProcessBuilder());
                 System.out.println("Run script");
 
-                ProcessBuider processBuider =  new ProcessBuider(createListArgsForProcessBuilder());
+                ProcessBuider processBuider = new ProcessBuider(createListArgsForProcessBuilder());
                 processBuider.start();
             }
         };
@@ -139,47 +142,30 @@ public class RegressionParams extends Application {
         run.addEventFilter(MouseEvent.MOUSE_CLICKED, runEventHandler);
     }
 
-    private void findNameMethod(@NotNull String line, @NotNull final String method) {
-        String[] nameAndArgs = line.split(":");
-        String label = nameAndArgs[0].replaceAll(" ", "");
+    private void initPrevButton() {
+        prev = new Button();
+        prev.setText("prev");
+        prev = Utils.setStyle(prev);
 
-        if (label.equals(method)) {
-            initArgs(nameAndArgs[1].replaceAll(" ", "").split(","));
-        }
-    }
-
-    private void initArgs(String[] params) {
-        nameScript = params[0];
-        args = new String[params.length - 1];
-        initValue = new String[params.length - 1];
-
-        for (int i = 0; i < args.length; i++) {
-            String[] value = params[i + 1].split("#");
-            args[i] = value[0];
-            if (value.length == 1) { // only data with length = 1
-                initValue[i] = ChooseFileFX.getChooseFile();
-            } else {
-                initValue[i] = value[1];
+        EventHandler<MouseEvent> prevEventHandler = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent e) {
+                REGRESSION_METHOD_SCREEN.start(currentStage);
             }
-        }
+        };
+
+        prev.addEventFilter(MouseEvent.MOUSE_CLICKED, prevEventHandler);
     }
 
-    private void getArgument(@NotNull final String method) {
-        try (Stream<String> stream = Files.lines(Paths.get(PATH_TO_ARGS))) {
-            stream.forEach(line -> findNameMethod(line, method));
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
-        }
+    private void loadScripts() {
+        LoadScript.LoadArgs(PATH_TO_ARGS, PATH_TO_REGRESSION);
+        LoadScript.setValue(nameScript, "data", ChooseFileFX.getChooseFile());
     }
 
     private List<String> createListArgsForProcessBuilder() {
         List<String> res = new ArrayList<>();
         res.add("python");
-        res.add(PATH_TO_REGRESSION + "/" + nameScript + ".py");
-        for (int i = 0; i < args.length; i++) {
-            res.add("--" + args[i]);
-            res.add(initValue[i]);
-        }
+        res = LoadScript.getArgsListWithValueByLabel(nameScript, res);
         return res;
     }
 }
