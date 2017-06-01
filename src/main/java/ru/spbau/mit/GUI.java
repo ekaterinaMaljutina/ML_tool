@@ -156,6 +156,10 @@ public class GUI extends JFrame {
 
     }
 
+    public JTextArea getTextArea() {
+        return textArea;
+    }
+
     public void addToToolbar(Component component) {
         Dimension d = component.getPreferredSize();
         component.setMaximumSize(d);
@@ -165,7 +169,7 @@ public class GUI extends JFrame {
 
     }
 
-    public final JToolBar createToolBar() {
+    private final JToolBar createToolBar() {
         toolbar = new JToolBar();
 
         addToToolbar(datasetButton);

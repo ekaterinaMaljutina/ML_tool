@@ -3,6 +3,7 @@ package ru.spbau.mit;
 
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.*;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,9 +11,14 @@ import java.util.List;
 public class ProcessBuider extends Thread {
     private static final String PYTHON2 = "python";
     List<String> currentArgs;
+    JTextArea out;
 
     public ProcessBuider(@NotNull final List<String> args) { // data  - path, arg - value ...
         currentArgs = args;
+    }
+
+    public void setOut(@NotNull final JTextArea text) {
+        this.out = text;
     }
 
     @Override
@@ -30,7 +36,12 @@ public class ProcessBuider extends Thread {
             proc = processBuilder.start();
             InputStream stdout = proc.getInputStream();
 
-            IntupListenerProcess outListener = new IntupListenerProcess(stdout, null);
+            IntupListenerProcess outListener;
+            if (out == null) {
+                outListener = new IntupListenerProcess(stdout, null);
+            } else {
+                outListener = new IntupListenerProcess(stdout, out);
+            }
             outListener.start();
             outListener.join();
             int returnCode = proc.waitFor();
@@ -42,6 +53,6 @@ public class ProcessBuider extends Thread {
             System.out.println(ex.getMessage());
             interrupt();
         }
-//        scriptChosserActionLisner.updateProgressBar(100);
+        scriptChosserActionLisner.updateProgressBar(100);
     }
 }

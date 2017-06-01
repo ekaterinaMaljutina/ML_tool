@@ -25,27 +25,29 @@ public class IntupListenerProcess extends Thread {
         try {
             String value = null;
             while ((value = is.readLine()) != null) {
-                System.out.println(value);
-//                out.append(value + "\n");
-//                out.setCaretPosition(out.getDocument().getLength());
+                if (out == null) {
+                    System.out.println(value);
+                } else {
+                    out.append(value + "\n");
+                    out.setCaretPosition(out.getDocument().getLength());
+                }
                 if (GUI.isClassification()) {
                     if (value.contains("time")) {
                         Pattern pattern = Pattern.compile("time:(.*?)s");
                         Matcher matcher = pattern.matcher(value);
                         if (matcher.find()) {
                             double val = Double.parseDouble(matcher.group(1));
-//                            System.out.println(matcher.group(1));
                             sum += 1.0 / (20.0) * 100 / 100; // 100 % / count epoch
                             System.out.println(sum);
                             if (sum > 1) {
-                                scriptChosserActionLisner.updateProgressBar( 1);
+                                scriptChosserActionLisner.updateProgressBar(1);
                                 sum = 0;
                             }
 
                         }
                     }
                 } else {
-                    scriptChosserActionLisner.updateProgressBar(1);
+                    scriptChosserActionLisner.updateProgressBar(value.length());
                 }
             }
         } catch (IOException exp) {

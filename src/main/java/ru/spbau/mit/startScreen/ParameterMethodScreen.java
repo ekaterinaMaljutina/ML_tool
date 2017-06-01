@@ -13,6 +13,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import ru.spbau.mit.GUI;
 import ru.spbau.mit.ProcessBuider;
 import ru.spbau.mit.startScreen.regression.RegressionType;
 import ru.spbau.mit.startScreen.utilStyle.Utils;
@@ -121,11 +122,11 @@ public class ParameterMethodScreen extends Application {
         EventHandler<MouseEvent> runEventHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent e) {
-
-                System.out.println(createListArgsForProcessBuilder());
-                System.out.println("Run script");
+                currentStage.close();
+                GUI gui = new GUI();
 
                 ProcessBuider processBuider = new ProcessBuider(createListArgsForProcessBuilder());
+                processBuider.setOut(gui.getTextArea());
                 processBuider.start();
             }
         };
@@ -165,6 +166,11 @@ public class ParameterMethodScreen extends Application {
     private List<String> createListArgsForProcessBuilder() {
         List<String> res = new ArrayList<>();
         res.add("python");
+        if (ChooseFileFX.getChooseFile() == null) {
+            System.out.println("not file");
+            throw new RuntimeException("file not found");
+        }
+        LoadScript.setValue(type, "data", ChooseFileFX.getChooseFile());
         res = LoadScript.getArgsListWithValueByLabel(type, res);
         return res;
     }
