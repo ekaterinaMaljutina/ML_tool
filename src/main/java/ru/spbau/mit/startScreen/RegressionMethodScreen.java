@@ -2,16 +2,22 @@ package ru.spbau.mit.startScreen;
 
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.geometry.HPos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Toggle;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.spbau.mit.ProcessBuider;
 import ru.spbau.mit.startScreen.utilStyle.Utils;
 
 public class RegressionMethodScreen extends Application {
@@ -24,14 +30,15 @@ public class RegressionMethodScreen extends Application {
     private Stage currentStage;
     private Scene startScreen;
 
-    private Text linearRegression;
-    private Text polynRegression;
-    private Text lassoRegression;
+    private RadioButton[] typeMethodChoose;
+    private final ToggleGroup groupMethodChoose = new ToggleGroup();
 
     private static GridPane gridPane;
 
     private Button next;
     private Button prev;
+
+    private String selectRaioButton;
 
 
     @Override
@@ -51,9 +58,11 @@ public class RegressionMethodScreen extends Application {
         gridPane.setVgap(5);
         gridPane.setHgap(10);
 
-        gridPane.add(linearRegression, 1, 1);
-        gridPane.add(polynRegression, 1, 2);
-        gridPane.add(lassoRegression, 1, 3);
+        for (int i = 0; i < typeMethodChoose.length; i++) {
+            gridPane.add(typeMethodChoose[i], 1, i);
+            GridPane.setHalignment(typeMethodChoose[i], HPos.LEFT);
+        }
+
         gridPane.add(prev, 0, 6);
         GridPane.setHalignment(prev, HPos.LEFT);
         gridPane.add(next, 2, 6);
@@ -63,10 +72,15 @@ public class RegressionMethodScreen extends Application {
 
     private void initChild() {
         initButton();
+        addListenerOfChange();
 
-        linearRegression = initText(linearRegression, LINEAR_REGRESSION);
-        polynRegression = initText(polynRegression, POLY_REGRESSION);
-        lassoRegression = initText(lassoRegression, LASSO_REGRESSION);
+        RegressionType[] types = RegressionType.values();
+
+        typeMethodChoose = new RadioButton[types.length - 1];
+        for (int i = 0; i < typeMethodChoose.length; i++) {
+            typeMethodChoose[i] = new RadioButton(types[i].name());
+            typeMethodChoose[i].setToggleGroup(groupMethodChoose);
+        }
     }
 
     private void initButton() {
@@ -79,8 +93,10 @@ public class RegressionMethodScreen extends Application {
         EventHandler<MouseEvent> nextEventHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent e) {
-                RegressionParams.setRegressionType(RegressionType.LinearRegression);
-                REGRESSION_PARAMS.start(currentStage);
+                if (selectRaioButton != null) {
+                    RegressionParams.setRegressionType(selectRaioButton);
+                    REGRESSION_PARAMS.start(currentStage);
+                }
             }
         };
 
@@ -90,11 +106,19 @@ public class RegressionMethodScreen extends Application {
         next = Utils.setStyle(next);
     }
 
-    private Text initText(@Nullable Text text, @NotNull final String value) {
-        text = new Text();
-        text = Utils.initTextBlend(text, 20);
-        text.setText(value);
-        return text;
+    private void addListenerOfChange() {
+        groupMethodChoose.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+            public void changed(ObservableValue<? extends Toggle> ov,
+                                Toggle oldToggle, Toggle newToggle) {
+                if (groupMethodChoose.getSelectedToggle() != null) {
+                    RadioButton radioButton = (RadioButton) groupMethodChoose.getSelectedToggle();
+//                    System.out.println("Selected Radio Button - " + radioButton.getText());
+                    selectRaioButton = radioButton.getText();
+                }
+
+            }
+        });
+
     }
 
     public static void main(String args[]) {

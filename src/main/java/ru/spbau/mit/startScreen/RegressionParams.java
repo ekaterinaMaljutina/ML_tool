@@ -34,9 +34,7 @@ public class RegressionParams extends Application {
     private static final String PATH_TO_ARGS = PATH_TO_REGRESSION + "/ArgsFile";
     private static final RegressionMethodScreen REGRESSION_METHOD_SCREEN = new RegressionMethodScreen();
 
-    private static RegressionType type = RegressionType.None;
-
-    private String nameScript;
+    private static String type = RegressionType.None.name();
 
     private Text[] text;
     private Spinner<String>[] spinners;
@@ -57,14 +55,14 @@ public class RegressionParams extends Application {
 
     }
 
-    public static void setRegressionType(RegressionType t) {
+    public static void setRegressionType(String t) {
         type = t;
     }
 
     private <T> void commitEditorText(Spinner<T> spinner, int idx) {
         if (!spinner.isEditable()) return;
         String value = spinner.getEditor().getText();
-        LoadScript.setValue(nameScript, text[idx].getText(), value);
+        LoadScript.setValue(type, text[idx].getText(), value);
     }
 
 
@@ -80,7 +78,7 @@ public class RegressionParams extends Application {
             final int idx = i;
             valueFactory =
                     new SpinnerValueFactory.ListSpinnerValueFactory<String>(
-                            FXCollections.observableArrayList(LoadScript.getInitArgsValueByLabel(nameScript,
+                            FXCollections.observableArrayList(LoadScript.getInitArgsValueByLabel(type,
                                     text[i].getText())));
             spinners[i].setValueFactory(valueFactory);
             spinners[i].setEditable(true);
@@ -106,13 +104,12 @@ public class RegressionParams extends Application {
         initRunButton();
         initPrevButton();
 
-        nameScript = type.name();
         loadScripts();
 
-        text = new Text[LoadScript.getSizeArgByLabel(nameScript)];
+        text = new Text[LoadScript.getSizeArgByLabel(type)];
         spinners = new Spinner[text.length];
         int i = 0;
-        for (String value : LoadScript.getSetArgByLabel(nameScript)) {
+        for (String value : LoadScript.getSetArgByLabel(type)) {
             text[i] = new Text();
             spinners[i] = new Spinner<>();
             text[i] = Utils.initTextBlend(text[i], 14);
@@ -159,13 +156,13 @@ public class RegressionParams extends Application {
 
     private void loadScripts() {
         LoadScript.LoadArgs(PATH_TO_ARGS, PATH_TO_REGRESSION);
-        LoadScript.setValue(nameScript, "data", ChooseFileFX.getChooseFile());
+        LoadScript.setValue(type, "data", ChooseFileFX.getChooseFile());
     }
 
     private List<String> createListArgsForProcessBuilder() {
         List<String> res = new ArrayList<>();
         res.add("python");
-        res = LoadScript.getArgsListWithValueByLabel(nameScript, res);
+        res = LoadScript.getArgsListWithValueByLabel(type, res);
         return res;
     }
 }
