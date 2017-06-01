@@ -14,7 +14,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import org.jetbrains.annotations.NotNull;
+import ru.spbau.mit.ProcessBuider;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -57,6 +59,21 @@ public class RegressionParams extends Application {
         type = t;
     }
 
+    private <T> void commitEditorText(Spinner<T> spinner, int idx) {
+        if (!spinner.isEditable()) return;
+        String text = spinner.getEditor().getText();
+        initValue[idx] = text;
+        SpinnerValueFactory<T> valueFactory = spinner.getValueFactory();
+        if (valueFactory != null) {
+            StringConverter<T> converter = valueFactory.getConverter();
+            if (converter != null) {
+                T value = converter.fromString(text);
+                valueFactory.setValue(value);
+            }
+        }
+    }
+
+
     private void initGrid() {
         initChild();
 
@@ -70,13 +87,12 @@ public class RegressionParams extends Application {
                             FXCollections.observableArrayList(initValue[i]));
             spinners[i].setValueFactory(valueFactory);
             spinners[i].setEditable(true);
-            spinners[i].valueProperty().addListener(new ChangeListener<String>() {
-                @Override
-                public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                    initValue[idx] = newValue;
-//                    System.out.println(String.format("%s old value, %s new value, %s idx, %s initValue",
-//                            oldValue, newValue, idx, initValue[idx]));
-                }
+
+            spinners[idx].focusedProperty().addListener((s, oldValue, newValue) -> {
+                if (newValue) return;
+//                System.out.println(String.format("%s old value, %s new value, %s idx, %s initValue",
+//                        oldValue, newValue, idx, initValue[idx]));
+                commitEditorText(spinners[idx], idx);
             });
             gridPane.add(text[i], 0, i);
             gridPane.add(spinners[i], 1, i);
@@ -111,8 +127,12 @@ public class RegressionParams extends Application {
         EventHandler<MouseEvent> runEventHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent e) {
+
                 System.out.println(createListArgsForProcessBuilder());
                 System.out.println("Run script");
+
+                ProcessBuider processBuider =  new ProcessBuider(createListArgsForProcessBuilder());
+                processBuider.start();
             }
         };
 
@@ -154,6 +174,8 @@ public class RegressionParams extends Application {
 
     private List<String> createListArgsForProcessBuilder() {
         List<String> res = new ArrayList<>();
+        res.add("python");
+        res.add(PATH_TO_REGRESSION + "/" + nameScript + ".py");
         for (int i = 0; i < args.length; i++) {
             res.add("--" + args[i]);
             res.add(initValue[i]);
