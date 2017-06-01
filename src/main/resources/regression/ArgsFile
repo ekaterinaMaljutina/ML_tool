@@ -1,3 +1,3 @@
 LinearRegression        : Regression, data, degree#5, split#0.1
-RidgeRegression         : Ridge_Regression, data, degree, alpha, split
-Lasso                   : Lasso, data, degree, alpha, iter, split
+RidgeRegression         : Ridge_Regression, data, degree#2, alpha#0.1, split#0.1
+Lasso                   : Lasso, data, degree#3, alpha#0.1, iter#100, split#0.1
