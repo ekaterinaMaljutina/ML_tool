@@ -13,26 +13,20 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
-import org.jetbrains.annotations.NotNull;
 import ru.spbau.mit.ProcessBuider;
-import ru.spbau.mit.Script;
+import ru.spbau.mit.startScreen.regression.RegressionType;
 import ru.spbau.mit.startScreen.utilStyle.Utils;
 import ru.spbau.mit.utilScript.LoadScript;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Stream;
 
-public class RegressionParams extends Application {
+public class ParameterMethodScreen extends Application {
 
-    private static final String PATH_TO_REGRESSION = "src/main/resources/regression";
-    private static final String PATH_TO_ARGS = PATH_TO_REGRESSION + "/ArgsFile";
-    private static final RegressionMethodScreen REGRESSION_METHOD_SCREEN = new RegressionMethodScreen();
+    private static final String PATH = "src/main/resources/";
+    private static final String ARGS = "/ArgsFile";
+
+    private static final ChooseMethodScreen CHOOSE_METHOD_SCREEN = new ChooseMethodScreen();
 
     private static String type = RegressionType.None.name();
 
@@ -96,8 +90,8 @@ public class RegressionParams extends Application {
         GridPane.setHalignment(prev, HPos.LEFT);
         gridPane.add(run, 3, text.length);
         GridPane.setHalignment(run, HPos.RIGHT);
-        gridPane.setVgap(5);
-        gridPane.setHgap(10);
+        gridPane.setVgap(2);
+        gridPane.setHgap(5);
     }
 
     private void initChild() {
@@ -147,7 +141,7 @@ public class RegressionParams extends Application {
         EventHandler<MouseEvent> prevEventHandler = new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent e) {
-                REGRESSION_METHOD_SCREEN.start(currentStage);
+                CHOOSE_METHOD_SCREEN.start(currentStage);
             }
         };
 
@@ -155,8 +149,17 @@ public class RegressionParams extends Application {
     }
 
     private void loadScripts() {
-        LoadScript.LoadArgs(PATH_TO_ARGS, PATH_TO_REGRESSION);
-        LoadScript.setValue(type, "data", ChooseFileFX.getChooseFile());
+        String path = PATH;
+        if (TaskScreen.isClassification()) {
+            path += TaskScreen.CLASSIFICATION_TEXT;
+        }
+        if (TaskScreen.isRegression()) {
+            path += TaskScreen.REGRESSION_TEXT;
+        }
+        LoadScript.LoadArgs(path + ARGS, path);
+        if (ChooseFileFX.getChooseFile() != null) {
+            LoadScript.setValue(type, "data", ChooseFileFX.getChooseFile());
+        }
     }
 
     private List<String> createListArgsForProcessBuilder() {

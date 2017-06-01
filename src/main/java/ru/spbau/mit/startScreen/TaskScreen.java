@@ -18,10 +18,10 @@ public class TaskScreen extends Application {
 
     private static final ChooseFileFX CHOOSE_FILE_FX = new ChooseFileFX();
 
-    private static final RegressionMethodScreen REGRESSION_METHOD_SCREEN = new RegressionMethodScreen();
+    private static final ChooseMethodScreen REGRESSION_METHOD_SCREEN = new ChooseMethodScreen();
 
-    private static final String CLASSIFICATION_TEXT = "Classification";
-    private static final String REGRESSION_TEXT = "Regression";
+    public static final String CLASSIFICATION_TEXT = "classification";
+    public static final String REGRESSION_TEXT = "regression";
     private static final String GOOD_TEXT = "Good";
 
     private static boolean chooseRegression = false;
@@ -49,6 +49,7 @@ public class TaskScreen extends Application {
         currentStage.setScene(startScreen);
         currentStage.show();
     }
+
     public static boolean isRegression() {
         return chooseRegression;
     }
@@ -79,11 +80,13 @@ public class TaskScreen extends Application {
                         classificationTask.setText("\t\t");
                         regressionTask.setText("\t" + GOOD_TEXT + "\t");
                         chooseRegression = true;
+                        chooseClassification = false;
                         break;
                     case CLASSIFICATION_TEXT:
                         classificationTask.setText("\t" + GOOD_TEXT + "\t");
                         regressionTask.setText("\t\t");
                         chooseClassification = true;
+                        chooseRegression = false;
                         break;
                 }
             }
@@ -108,10 +111,7 @@ public class TaskScreen extends Application {
             @Override
             public void handle(MouseEvent e) {
                 currentStage.close();
-//                Main.main(null);
-                if (chooseRegression) {
-                    REGRESSION_METHOD_SCREEN.start(currentStage);
-                }
+                REGRESSION_METHOD_SCREEN.start(currentStage);
             }
         };
 
@@ -143,5 +143,9 @@ public class TaskScreen extends Application {
         GridPane.setHalignment(prev, HPos.LEFT);
         gridPane.add(next, 2, 2);
         GridPane.setHalignment(next, HPos.RIGHT);
+    }
+
+    public static void main(String args[]) {
+        launch(args);
     }
 }

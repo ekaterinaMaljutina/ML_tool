@@ -13,19 +13,15 @@ import javafx.scene.control.Toggle;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import ru.spbau.mit.ProcessBuider;
+import ru.spbau.mit.startScreen.classification.ClassificationType;
+import ru.spbau.mit.startScreen.regression.RegressionType;
 import ru.spbau.mit.startScreen.utilStyle.Utils;
 
-public class RegressionMethodScreen extends Application {
-    private static final String LINEAR_REGRESSION = "Linear Regression";
-    private static final String POLY_REGRESSION = "Polynomial Regression";
-    private static final String LASSO_REGRESSION = "Lasso Regression";
+public class ChooseMethodScreen extends Application {
 
-    private static final RegressionParams REGRESSION_PARAMS = new RegressionParams();
+    private static final ParameterMethodScreen PARAMETER_METHOD_SCREEN = new ParameterMethodScreen();
+    private static final TaskScreen TASK_SCREEN = new TaskScreen();
 
     private Stage currentStage;
     private Scene startScreen;
@@ -74,12 +70,22 @@ public class RegressionMethodScreen extends Application {
         initButton();
         addListenerOfChange();
 
-        RegressionType[] types = RegressionType.values();
+        if (TaskScreen.isClassification()) {
+            ClassificationType[] types = ClassificationType.values();
+            typeMethodChoose = new RadioButton[types.length - 1];
+            for (int i = 0; i < typeMethodChoose.length; i++) {
+                typeMethodChoose[i] = new RadioButton(types[i].name());
+                typeMethodChoose[i].setToggleGroup(groupMethodChoose);
+            }
 
-        typeMethodChoose = new RadioButton[types.length - 1];
-        for (int i = 0; i < typeMethodChoose.length; i++) {
-            typeMethodChoose[i] = new RadioButton(types[i].name());
-            typeMethodChoose[i].setToggleGroup(groupMethodChoose);
+        }
+        if (TaskScreen.isRegression()) {
+            RegressionType[] types = RegressionType.values();
+            typeMethodChoose = new RadioButton[types.length - 1];
+            for (int i = 0; i < typeMethodChoose.length; i++) {
+                typeMethodChoose[i] = new RadioButton(types[i].name());
+                typeMethodChoose[i].setToggleGroup(groupMethodChoose);
+            }
         }
     }
 
@@ -94,12 +100,20 @@ public class RegressionMethodScreen extends Application {
             @Override
             public void handle(MouseEvent e) {
                 if (selectRaioButton != null) {
-                    RegressionParams.setRegressionType(selectRaioButton);
-                    REGRESSION_PARAMS.start(currentStage);
+                    ParameterMethodScreen.setRegressionType(selectRaioButton);
+                    PARAMETER_METHOD_SCREEN.start(currentStage);
                 }
             }
         };
 
+        EventHandler<MouseEvent> prevEventHandler = new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent e) {
+                TASK_SCREEN.start(currentStage);
+            }
+        };
+
+        prev.addEventFilter(MouseEvent.MOUSE_CLICKED, prevEventHandler);
         next.addEventFilter(MouseEvent.MOUSE_CLICKED, nextEventHandler);
 
         prev = Utils.setStyle(prev);
@@ -112,7 +126,6 @@ public class RegressionMethodScreen extends Application {
                                 Toggle oldToggle, Toggle newToggle) {
                 if (groupMethodChoose.getSelectedToggle() != null) {
                     RadioButton radioButton = (RadioButton) groupMethodChoose.getSelectedToggle();
-//                    System.out.println("Selected Radio Button - " + radioButton.getText());
                     selectRaioButton = radioButton.getText();
                 }
 
@@ -124,5 +137,4 @@ public class RegressionMethodScreen extends Application {
     public static void main(String args[]) {
         launch(args);
     }
-
 }
