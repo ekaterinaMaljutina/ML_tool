@@ -1,0 +1,6 @@
+test                    : test
+train                   : train, data
+FullConNet              : FullConNet, data, epoch#100, batch_size#256, snapshot#20, func_act#relu, lr#0.001
+Conv1AndFullConnect     : Conv1AndFullConnect, data, epoch#100, batch_size#256, snapshot#20, fucn_act#relu, lr#0.001
+Conv2AndFullConc        : Conv2AndFullConc, data, epoch#100, batch_size#256, snapshot#20, lr#0.001
+Conv2DropAndFull        : Conv2DropAndFull, data, epoch#100, batch_size#256, snapshot#20, drop#0.5, lr#0.001
